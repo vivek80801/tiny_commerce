@@ -7,3 +7,78 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+
+@layer base {
+    h1 {
+        @apply text-4xl font-bold;
+    }
+
+    h2 {
+        @apply text-3xl font-bold;
+    }
+
+    h3 {
+        @apply text-2xl font-bold;
+    }
+
+    h4 {
+        @apply text-xl font-bold;
+    }
+}
+
+@layer components {
+    .desktop-nav {
+        @apply hidden md:flex justify-around
+            items-center p-3
+            bg-blue-700 text-white;
+        & ul {
+            @apply flex ;
+            & a {
+                @apply p-3;
+                &:hover {
+                    @apply underline;
+                }
+            }
+        }
+    }
+
+    .mobile-nav {
+        @apply flex md:hidden justify-around
+            items-center p-3
+            bg-blue-700 text-white;
+        & .lines {
+            @apply cursor-pointer;
+            & .line {
+                @apply bg-white m-1 w-8 h-1;
+            }
+        }
+        & ul {
+            @apply bg-blue-700 absolute top-13 p-2 left-0
+                w-full flex justify-center items-center
+                flex-col hidden z-1
+            ;
+        }
+    }
+
+    .products-container{
+        @apply bg-gray-300;
+        .products {
+            @apply grid grid-cols-1
+                sm:grid-cols-2 md:grid-cols-3
+                lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6
+                gap-4;
+            & .product {
+                @apply m-4 bg-white p-3
+                    flex justify-around items-center flex-col
+                    rounded
+                ;
+                & img {
+                    @apply w-30 h-40;
+                }
+            }
+        }
+    }
+}
+
+
