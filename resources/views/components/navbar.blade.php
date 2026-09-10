@@ -1,9 +1,20 @@
 <nav class="desktop-nav">
     <h2>Logo</h2>
-    <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">About Us</a></li>
-        <li><a href="#">Contact Us</a></li>
+    <ul class="flex justify-center items-center">
+        <li><a href="{{route('home')}}">Home</a></li>
+        @guest
+            <li><a href="{{route('register')}}">Register</a></li>
+            <li><a href="{{route('login')}}">Login</a></li>
+        @endguest
+        @auth
+            <li><a href="{{route('dashboard')}}">Dashboard</a></li>
+            <li>
+                <form action="{{route('logout')}}" method="post">
+                    @csrf
+                    <button type="submit">Logout</button>
+                </form>
+            </li>
+        @endauth
     </ul>
 </nav>
 
@@ -15,9 +26,20 @@
         <div class="line"></div>
     </div>
     <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">About Us</a></li>
-        <li><a href="#">Contact Us</a></li>
+        <li><a href="{{route('home')}}">Home</a></li>
+        @guest
+            <li><a href="{{route('register')}}">Register</a></li>
+            <li><a href="{{route('login')}}">Login</a></li>
+        @endguest
+        @auth
+            <li><a href="{{route('dashboard')}}">Dashboard</a></li>
+            <li>
+                <form action="{{route('logout')}}" method="post">
+                    @csrf
+                    <button type="submit">Logout</button>
+                </form>
+            </li>
+        @endauth
     </ul>
 </nav>
 

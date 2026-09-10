@@ -11,7 +11,7 @@
                     <h4>{{$product->name}}</h4>
                     <b>&#x20B9;{{$product->price / 100}}</b>
                     @if($product->quantity <= 0)
-                        <span class="bg-yellow-300">Sold</span>
+                        <span class="bg-yellow-300 p-2 rounded text-red-600">Sold</span>
                     @elseif($product->quantity <= 20)
                         <span class="bg-yellow-300 p-2 rounded">Only {{$product->quantity}} items Left</span>
                     @endif

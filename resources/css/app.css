@@ -79,6 +79,32 @@
             }
         }
     }
+
+    form{
+        & .form-group {
+            @apply flex justify-between items-center
+                flex-col p-3 md:flex-row m-3
+            ;
+            & label {
+                @apply text-xl mb-3;
+            }
+            & input{
+                @apply p-4 border-2 rounded border-gray-400
+                    outline-blue-600
+                ;
+            }
+        }
+
+        & button[type="submit"]{
+            @apply bg-blue-600 p-3 rounded text-white
+                w-full cursor-pointer hover:bg-blue-800
+            ;
+        }
+
+        & .err-msg {
+            @apply text-red-600 text-center font-bold;
+        }
+    }
 }
 
 
