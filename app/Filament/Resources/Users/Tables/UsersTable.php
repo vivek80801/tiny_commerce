@@ -7,6 +7,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -20,6 +21,11 @@ class UsersTable
             ->columns([
                 TextColumn::make("name"),
                 TextColumn::make("email"),
+                ToggleColumn::make("is_admin")
+                    ->label("Admin")
+                ,
+                TextColumn::make("created_at")->label("Created")->since(),
+                TextColumn::make("updated_at")->label("Updated")->since(),
             ])
             ->filters([
                 Filter::make("admin")

@@ -14,18 +14,28 @@ class UserForm
         return $schema
             ->components([
                 TextInput::make('name')->required(),
-                TextInput::make('email')->email()->required(),
+                TextInput::make('email')
+                    ->email()
+                    ->unique("users", "email")
+                    ->required(),
+
                 TextInput::make('password')
                     ->password()
+                    ->minLength(5)
+                    ->maxLength(20)
                     ->revealable()
+                    ->confirmed()
                     ->required(),
-                TextInput::make('confirm password')
+
+                TextInput::make('password_confirmation')
+                    ->label("Confirm Password")
                     ->password()
                     ->revealable()
-                    ->hiddenOn(Operation::Edit)
-                    ->visibleOn(Operation::Create)
-                    ->required(),
-                Checkbox::make('admin'),
+                    ->required()
+                    ->dehydrated(false)
+                ,
+
+                Checkbox::make('is_admin')->label("Admin"),
             ]);
     }
 }
