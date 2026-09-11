@@ -2,6 +2,7 @@
     <h2>Logo</h2>
     <ul class="flex justify-center items-center">
         <li><a href="{{route('home')}}">Home</a></li>
+        <x-nav-cart-counter />
         @guest
             <li><a href="{{route('register')}}">Register</a></li>
             <li><a href="{{route('login')}}">Login</a></li>
@@ -27,6 +28,7 @@
     </div>
     <ul>
         <li><a href="{{route('home')}}">Home</a></li>
+        <x-nav-cart-counter />
         @guest
             <li><a href="{{route('register')}}">Register</a></li>
             <li><a href="{{route('login')}}">Login</a></li>

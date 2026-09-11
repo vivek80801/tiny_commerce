@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Override;
+use App\Models\Cart;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
@@ -42,5 +44,13 @@ class User extends Authenticatable implements FilamentUser
         }
 
         return false;
+    }
+
+    /**
+    * @return HasMany
+    */
+    public function cart(): HasMany
+    {
+        return $this->hasMany(Cart::class);
     }
 }

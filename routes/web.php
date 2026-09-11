@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 
@@ -16,4 +17,11 @@ Route::group(["middleware" => ["guest"]], function(){
 Route::group(["middleware" => ["auth"]], function(){
     Route::post("/logout", [AuthController::class, "logout"])->name("logout");
     Route::get("/dashboard", [AuthController::class, "dashboard"])->name("dashboard");
+});
+
+Route::group(["prefix" => "/cart"], function(){
+    Route::get("/", [CartController::class, "index"])->name("cart.index");
+    Route::get("/{product}", [CartController::class, "addToCart"])->name("cart.add");
+    Route::get("/increment/{product}", [CartController::class, "increment"])->name("cart.inc");
+    Route::get("/decrease/{product}", [CartController::class, "decrease"])->name("cart.dec");
 });

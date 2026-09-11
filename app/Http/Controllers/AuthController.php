@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
+use App\Models\Cart;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -28,11 +31,29 @@ class AuthController extends Controller
             "password" => "required|confirmed|min:5|max:20",
         ]);
 
-        User::create([
+        $user = User::create([
             "name" => $request->name,
             "email" => $request->email,
             "password" => $request->password,
         ]);
+
+        $token = Cookie::get("guest_token");
+
+        if($token)
+        {
+            $cart_ids = Cart::where("guest_token", $token)
+                ->pluck("id")
+                ->toArray();
+
+            DB::table("carts")
+                ->whereIn("id", $cart_ids)
+                ->update(
+                    [
+                        "user_id" => $user->id,
+                        "guest_token" => null,
+                    ]
+                );
+        }
 
         if(Auth::attempt([
             "email" => $request->email,
@@ -69,6 +90,53 @@ class AuthController extends Controller
             {
                 return redirect()->to(route('filament.admin.auth.login'))->with("success", "you are logged in");
             } else {
+                $token = Cookie::get("guest_token");
+
+                if($token)
+                {
+                    $carts = Cart::where("user_id", auth()->user()->id)->get();
+
+                    if(count($carts) > 0)
+                    {
+                        $tmp_carts = Cart::where("guest_token", $token)->get();
+
+                        foreach($tmp_carts as $cart)
+                        {
+                            $cart_item = Cart::where([
+                                ["product_id", $cart->product->id],
+                                ["user_id", auth()->user()->id],
+                            ])->first();
+
+                            if($cart_item)
+                            {
+                                $cart_item->increment("quantity");
+                                $cart_item->save();
+
+                            } else {
+                                Cart::create([
+                                    "product_id" => $cart->product->id,
+                                    "quantity" => 1,
+                                    "user_id" => auth()->user()->id,
+                                ]);
+                            }
+
+                            $cart->delete();
+                        }
+                    }else {
+                        $cart_ids = Cart::where("guest_token", $token)
+                            ->pluck("id")
+                            ->toArray();
+
+                        DB::table("carts")
+                            ->whereIn("id", $cart_ids)
+                            ->update(
+                                [
+                                    "user_id" => auth()->user()->id,
+                                    "guest_token" => null,
+                                ]
+                            );
+                    }
+                }
                 return redirect()->to(route("dashboard"))->with("success", "you are logged in");
             }
         } else {

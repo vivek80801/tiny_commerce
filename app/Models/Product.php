@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Category;
 use App\Models\Image;
+use App\Models\Cart;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 #[Fillable(["name", "price", "description", "quantity", "category_id" ])]
@@ -33,5 +35,13 @@ class Product extends Model
     public function image(): MorphOne
     {
         return $this->morphOne(Image::class, "imageable");
+    }
+
+    /**
+    * @return HasMany
+    */
+    public function cart(): HasMany
+    {
+        return $this->hasMany(Cart::class);
     }
 }
