@@ -18,7 +18,7 @@ class CountryFactory extends Factory
     public function definition(): array
     {
         return [
-            "name" => "India",
+            'name' => 'India',
         ];
     }
 }

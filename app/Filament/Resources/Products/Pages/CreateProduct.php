@@ -12,6 +12,7 @@ class CreateProduct extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['price'] = $data['price'] * 100;
+
         return $data;
     }
 }

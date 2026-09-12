@@ -19,11 +19,11 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            "name" => fake()->name(),
-            "price" => fake()->numberBetween(10000, 100000),
-            "description" => fake()->text(100),
-            "quantity" => fake()->numberBetween(0, 50),
-            "category_id" => Category::inRandomOrder()->first()->id,
+            'name' => fake()->name(),
+            'price' => fake()->numberBetween(10000, 100000),
+            'description' => fake()->text(100),
+            'quantity' => fake()->numberBetween(0, 50),
+            'category_id' => Category::inRandomOrder()->first()->id,
         ];
     }
 }

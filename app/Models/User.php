@@ -9,11 +9,10 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Override;
-use App\Models\Cart;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
@@ -38,17 +37,13 @@ class User extends Authenticatable implements FilamentUser
     #[Override]
     public function canAccessPanel(Panel $panel): bool
     {
-        if($panel->getId() === "admin")
-        {
+        if ($panel->getId() === 'admin') {
             return $this->is_admin;
         }
 
         return false;
     }
 
-    /**
-    * @return HasMany
-    */
     public function cart(): HasMany
     {
         return $this->hasMany(Cart::class);

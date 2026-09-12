@@ -14,21 +14,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table("addresses", function(Blueprint $table){
-            $table->foreignIdFor(Country::class, "country_id")
+        Schema::table('addresses', function (Blueprint $table) {
+            $table->foreignIdFor(Country::class, 'country_id')
                 ->constrained()
-                ->onDelete('cascade')
-            ;
+                ->onDelete('cascade');
 
-            $table->foreignIdFor(State::class, "state_id")
+            $table->foreignIdFor(State::class, 'state_id')
                 ->constrained()
-                ->onDelete('cascade')
-            ;
+                ->onDelete('cascade');
 
-            $table->foreignIdFor(District::class, "district_id")
+            $table->foreignIdFor(District::class, 'district_id')
                 ->constrained()
-                ->onDelete('cascade')
-            ;
+                ->onDelete('cascade');
         });
     }
 
@@ -37,7 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table("addresses", function(){
-        });
+        Schema::table('addresses', function () {});
     }
 };

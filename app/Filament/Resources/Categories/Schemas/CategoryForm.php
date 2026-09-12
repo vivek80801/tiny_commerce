@@ -13,16 +13,15 @@ class CategoryForm
     {
         return $schema
             ->components([
-                TextInput::make("name")->required(),
-                Fieldset::make("category.image")
-                    ->label("Image")
-                    ->relationship("image")
+                TextInput::make('name')->required(),
+                Fieldset::make('category.image')
+                    ->label('Image')
+                    ->relationship('image')
                     ->markAsRequired()
                     ->schema([
-                        FileUpload::make("filename")
-                            ->disk("upload")
-                    ])
-                ,
+                        FileUpload::make('filename')
+                            ->disk('upload'),
+                    ]),
             ]);
     }
 }

@@ -20,48 +20,46 @@ class ProductsTable
     {
         return $table
             ->columns([
-                TextColumn::make("name"),
-                TextColumn::make("price")
-                    ->money("INR", 100)
-                    ->sortable()
-                ,
-                TextColumn::make("description")->limit(5),
-                TextColumn::make("category.name"),
-                ImageColumn::make("image.filename")
-                    ->label("Image")
+                TextColumn::make('name'),
+                TextColumn::make('price')
+                    ->money('INR', 100)
+                    ->sortable(),
+                TextColumn::make('description')->limit(5),
+                TextColumn::make('category.name'),
+                ImageColumn::make('image.filename')
+                    ->label('Image')
                     ->imageHeight(40)
                     ->circular()
-                    ->disk("upload")
-                    ->alt("Product Image")
-                ,
-                TextColumn::make("created_at")->since(),
-                TextColumn::make("updated_at")->since(),
+                    ->disk('upload')
+                    ->alt('Product Image'),
+                TextColumn::make('created_at')->since(),
+                TextColumn::make('updated_at')->since(),
             ])
             ->filters([
                 Filter::make('price')
-                   ->schema([
-                       TextInput::make('from')
-                           ->numeric()
-                           ->debounce(),
-                       TextInput::make('to')
-                           ->numeric()
-                           ->debounce(),
-                   ])
-                   ->query(function (Builder $query, array $data): Builder {
-                       return $query
-                           ->when(
-                               $data['from'],
-                               fn (Builder $query, $from): Builder => $query->where('price', '>=', $from),
-                               fn (Builder $query): Builder => $query
-                           )
-                           ->when(
-                               $data['to'],
-                               fn (Builder $query, $to): Builder => $query->where('price', '<=', $to),
-                               fn (Builder $query): Builder => $query
-                           );
-                   }),
-                SelectFilter::make("category")
-                    ->relationship("category", "name")
+                    ->schema([
+                        TextInput::make('from')
+                            ->numeric()
+                            ->debounce(),
+                        TextInput::make('to')
+                            ->numeric()
+                            ->debounce(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['from'],
+                                fn (Builder $query, $from): Builder => $query->where('price', '>=', $from),
+                                fn (Builder $query): Builder => $query
+                            )
+                            ->when(
+                                $data['to'],
+                                fn (Builder $query, $to): Builder => $query->where('price', '<=', $to),
+                                fn (Builder $query): Builder => $query
+                            );
+                    }),
+                SelectFilter::make('category')
+                    ->relationship('category', 'name')
                     ->searchable()
                     ->preload(),
             ])

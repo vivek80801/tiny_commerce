@@ -2,9 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Models\Cart;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use App\Models\Cart;
 
 class CleanTmpCarts implements ShouldQueue
 {

@@ -46,7 +46,7 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->brandName("Samsung")
+            ->brandName('Samsung')
             ->authMiddleware([
                 Authenticate::class,
             ]);

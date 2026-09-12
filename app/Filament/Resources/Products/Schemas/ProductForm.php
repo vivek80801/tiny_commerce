@@ -15,37 +15,35 @@ class ProductForm
     {
         return $schema
             ->components([
-                TextInput::make("name")->required(),
-                TextInput::make("price")
+                TextInput::make('name')->required(),
+                TextInput::make('price')
                     ->numeric()
                     ->required(),
 
-                TextInput::make("quantity")->required()->numeric(),
+                TextInput::make('quantity')->required()->numeric(),
                 Textarea::make('description')
                     ->required()
                     ->autosize()
                     ->maxLength(500),
 
-                Select::make("category_id")
-                    ->label("Category")
-                    ->relationship("category", "name")
+                Select::make('category_id')
+                    ->label('Category')
+                    ->relationship('category', 'name')
                     ->createOptionForm([
-                        TextInput::make("name")->required()
+                        TextInput::make('name')->required(),
                     ])
                     ->required()
                     ->searchable()
-                    ->preload()
-                ,
+                    ->preload(),
 
-                Fieldset::make("product.image")
-                    ->label("Image")
-                    ->relationship("image")
+                Fieldset::make('product.image')
+                    ->label('Image')
+                    ->relationship('image')
                     ->markAsRequired()
                     ->schema([
-                        FileUpload::make("filename")
-                            ->disk("upload")
-                    ])
-                ,
+                        FileUpload::make('filename')
+                            ->disk('upload'),
+                    ]),
             ]);
     }
 }

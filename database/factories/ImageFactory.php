@@ -2,11 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Category;
 use App\Models\Image;
-use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
@@ -24,11 +21,11 @@ class ImageFactory extends Factory
     {
         $dir = storage_path('app/public/uploads');
 
-        if (!File::exists($dir)) {
+        if (! File::exists($dir)) {
             File::makeDirectory($dir, 0755, true);
         }
 
-        $width  = 800;
+        $width = 800;
         $height = 600;
 
         // Random RGB
@@ -37,15 +34,15 @@ class ImageFactory extends Factory
         $b = random_int(0, 255);
 
         $img = imagecreatetruecolor($width, $height);
-        $bg  = imagecolorallocate($img, $r, $g, $b);
+        $bg = imagecolorallocate($img, $r, $g, $b);
         imagefill($img, 0, 0, $bg);
 
-        $filename = Str::random(12) . '.jpg';
+        $filename = Str::random(12).'.jpg';
         imagejpeg($img, "$dir/$filename", 90);
         imagedestroy($img);
 
         return [
-            "filename" => $filename,
+            'filename' => $filename,
         ];
     }
 }

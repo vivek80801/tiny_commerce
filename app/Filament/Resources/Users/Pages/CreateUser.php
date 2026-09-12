@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\Users\Pages;
 
 use App\Filament\Resources\Users\UserResource;
-use Filament\Resources\Pages\CreateRecord;
 use App\Models\User;
+use Filament\Resources\Pages\CreateRecord;
 use Override;
 
 class CreateUser extends CreateRecord
@@ -14,7 +14,7 @@ class CreateUser extends CreateRecord
     #[Override]
     protected function handleRecordCreation(array $data): User
     {
-        $user = new User();
+        $user = new User;
         $user->name = $data['name'];
         $user->email = $data['email'];
         $user->password = $data['password'];

@@ -1,9 +1,9 @@
 <?php
 
+use App\Models\State;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\State;
 
 return new class extends Migration
 {
@@ -14,11 +14,10 @@ return new class extends Migration
     {
         Schema::create('districts', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(State::class, "state_id")
+            $table->foreignIdFor(State::class, 'state_id')
                 ->constrained()
-                ->onDelete('cascade')
-            ;
-            $table->string("name", 30);
+                ->onDelete('cascade');
+            $table->string('name', 30);
             $table->timestamps();
         });
     }

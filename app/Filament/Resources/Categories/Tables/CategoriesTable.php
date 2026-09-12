@@ -16,20 +16,18 @@ class CategoriesTable
     {
         return $table
             ->columns([
-                TextColumn::make("name"),
-                TextColumn::make("products_count")
-                    ->counts("products")
-                    ->label("Product Qty")
-                ,
-                ImageColumn::make("image.filename")
-                    ->label("Image")
+                TextColumn::make('name'),
+                TextColumn::make('products_count')
+                    ->counts('products')
+                    ->label('Product Qty'),
+                ImageColumn::make('image.filename')
+                    ->label('Image')
                     ->imageHeight(40)
                     ->circular()
-                    ->disk("upload")
-                ,
+                    ->disk('upload'),
 
-                TextColumn::make("created_at")->since(),
-                TextColumn::make("updated_at")->since(),
+                TextColumn::make('created_at')->since(),
+                TextColumn::make('updated_at')->since(),
             ])
             ->filters([
                 //

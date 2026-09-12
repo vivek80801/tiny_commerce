@@ -12,22 +12,19 @@ class CartForm
     {
         return $schema
             ->components([
-                Select::make("product_id")
-                    ->relationship("product", "name")
+                Select::make('product_id')
+                    ->relationship('product', 'name')
                     ->searchable()
                     ->preload()
-                    ->required()
-                ,
-                Select::make("user_id")
-                    ->relationship("user", "name")
+                    ->required(),
+                Select::make('user_id')
+                    ->relationship('user', 'name')
                     ->searchable()
                     ->preload()
-                    ->required()
-                ,
-                TextInput::make("quantity")
+                    ->required(),
+                TextInput::make('quantity')
                     ->numeric()
-                    ->required()
-                ,
+                    ->required(),
             ]);
     }
 }

@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Users\Schemas;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\Operation;
 
 class UserForm
 {
@@ -16,7 +15,7 @@ class UserForm
                 TextInput::make('name')->required(),
                 TextInput::make('email')
                     ->email()
-                    ->unique("users", "email")
+                    ->unique('users', 'email')
                     ->required(),
 
                 TextInput::make('password')
@@ -28,14 +27,13 @@ class UserForm
                     ->required(),
 
                 TextInput::make('password_confirmation')
-                    ->label("Confirm Password")
+                    ->label('Confirm Password')
                     ->password()
                     ->revealable()
                     ->required()
-                    ->dehydrated(false)
-                ,
+                    ->dehydrated(false),
 
-                Checkbox::make('is_admin')->label("Admin"),
+                Checkbox::make('is_admin')->label('Admin'),
             ]);
     }
 }

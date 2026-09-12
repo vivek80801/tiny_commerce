@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Image;
 use App\Models\Product;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ImageSeeder extends Seeder
@@ -18,17 +17,15 @@ class ImageSeeder extends Seeder
         $products = Product::all();
         $categories = Category::all();
 
-        foreach($products as $product)
-        {
+        foreach ($products as $product) {
             Image::factory()
-                ->for($product, "imageable")
+                ->for($product, 'imageable')
                 ->create();
         }
 
-        foreach($categories as $category)
-        {
+        foreach ($categories as $category) {
             Image::factory()
-                ->for($category, "imageable")
+                ->for($category, 'imageable')
                 ->create();
         }
     }

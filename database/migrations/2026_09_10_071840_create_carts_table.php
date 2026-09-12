@@ -15,20 +15,19 @@ return new class extends Migration
     {
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
-            $table->integer("quantity");
+            $table->integer('quantity');
 
-            $table->foreignIdFor(Product::class,"product_id")
+            $table->foreignIdFor(Product::class, 'product_id')
                 ->constrained()
-                ->onDelete("cascade");
+                ->onDelete('cascade');
 
-            $table->foreignIdFor(User::class,"user_id")
+            $table->foreignIdFor(User::class, 'user_id')
                 ->nullable()
                 ->constrained()
                 ->onDelete('cascade');
 
-            $table->uuid("guest_token")
-                ->nullable()
-            ;
+            $table->uuid('guest_token')
+                ->nullable();
             $table->timestamps();
         });
     }
