@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\OrderItem;
 use App\Models\User;
 use App\Models\Address;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     "user_id",
@@ -41,5 +41,4 @@ class Order extends Model
     {
         return $this->belongsTo(Address::class);
     }
-
 }

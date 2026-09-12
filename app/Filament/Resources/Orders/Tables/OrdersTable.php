@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Orders\Tables;
 
+use App\Filament\Resources\Orders\OrderResource;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -51,7 +52,9 @@ class OrdersTable
                 TextColumn::make("address.pin_code")
                     ->label("Pin Code")
                 ,
-            ])
+            ])->recordUrl(function($record){
+                 return route("filament.admin.resources.orders.view", $record->id);
+            })
             ->filters([
                 //
             ])

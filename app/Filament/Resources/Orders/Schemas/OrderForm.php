@@ -63,6 +63,9 @@ class OrderForm
                             ->label("District")
                         ,
                     ])
+                    ->columnSpan("full")
+                    ->columns(2)
+                    ->collapsible()
                 ,
             ]);
     }

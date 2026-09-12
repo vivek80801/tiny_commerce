@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Order;
+use App\Models\Product;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     "order_id",
@@ -22,5 +24,13 @@ class OrderItem extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
+    }
+
+    /**
+    * @return BelongsTo
+    */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
     }
 }
