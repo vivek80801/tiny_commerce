@@ -9,7 +9,7 @@
                 <div class="product">
                     <img src="/storage/uploads/{{$product->image->filename}}" alt="Product Image">
                     <h4>{{$product->name}}</h4>
-                    <b>&#x20B9;{{ $product->price / 100 }}</b>
+                    <b>&#x20B9;{{ $product->getPrice() }}</b>
                     @if($product->quantity <= 0)
                         <span class="bg-yellow-300 p-2 rounded text-red-600">Sold</span>
                     @elseif($product->quantity <= 20)

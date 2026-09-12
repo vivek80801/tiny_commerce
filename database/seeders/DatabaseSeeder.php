@@ -9,6 +9,9 @@ use Database\Seeders\UserSeeder;
 use Database\Seeders\CategorySeeder;
 use Database\Seeders\ProductSeeder;
 use Database\Seeders\CartSeeder;
+use Database\Seeders\CountrySeeder;
+use Database\Seeders\StateSeeder;
+use Database\Seeders\DistrictSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,6 +29,9 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             ImageSeeder::class,
             CartSeeder::class,
+            CountrySeeder::class,
+            StateSeeder::class,
+            DistrictSeeder::class,
         ]);
     }
 }

@@ -16,7 +16,10 @@ class ProductForm
         return $schema
             ->components([
                 TextInput::make("name")->required(),
-                TextInput::make("price")->required()->numeric(),
+                TextInput::make("price")
+                    ->numeric()
+                    ->required(),
+
                 TextInput::make("quantity")->required()->numeric(),
                 Textarea::make('description')
                     ->required()
@@ -24,7 +27,11 @@ class ProductForm
                     ->maxLength(500),
 
                 Select::make("category_id")
+                    ->label("Category")
                     ->relationship("category", "name")
+                    ->createOptionForm([
+                        TextInput::make("name")->required()
+                    ])
                     ->required()
                     ->searchable()
                     ->preload()

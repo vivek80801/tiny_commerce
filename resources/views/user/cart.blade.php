@@ -9,6 +9,7 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
@@ -35,8 +36,16 @@
             @foreach($carts as $cart)
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4 whitespace-nowrap">{{$cart->product->name}}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <img
+                        src="/storage/uploads/{{$cart->product->image->filename}}"
+                        width="100px"
+                        height="100px"
+                        class="rounded"
+                        alt="{{$cart->product->name}}"/>
+                    </td>
                     <td class="px-6 py-4 whitespace-nowrap">{{$cart->quantity}}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">&#x20B9;{{$cart->product->price / 100}}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">&#x20B9;{{$cart->product->getPrice()}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">&#x20B9;{{
                         ($cart->quantity * $cart->product->price) / 100
                     }}</td>
@@ -69,6 +78,19 @@
                 </tbody>
             </table>
             {{$carts->links()}}
+        </div>
+        <div class="flex justify-center items-center">
+            <a href="{{route('checkout')}}">
+                <button
+                    class="
+                    p-3 bg-blue-600 m-2 rounded
+                    text-white hover:bg-blue-800
+                    cursor-pointer
+                    "
+                    >
+                    Checkout
+                </button>
+            </a>
         </div>
     @else
         <h3 class="p-5 text-center">No Items found in your cart</h3>

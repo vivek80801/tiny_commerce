@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 
@@ -17,6 +18,10 @@ Route::group(["middleware" => ["guest"]], function(){
 Route::group(["middleware" => ["auth"]], function(){
     Route::post("/logout", [AuthController::class, "logout"])->name("logout");
     Route::get("/dashboard", [AuthController::class, "dashboard"])->name("dashboard");
+    Route::group(["prefix" => "/checkout"], function(){
+        Route::get("/", [CheckoutController::class, "index"])->name("checkout");
+        Route::post("/", [CheckoutController::class, "store"]);
+    });
 });
 
 Route::group(["prefix" => "/cart"], function(){

@@ -20,6 +20,10 @@ class Product extends Model
 
     use HasFactory;
 
+    public function getPrice(): float
+    {
+        return (float) $this->price / 100;
+    }
 
     /**
     * @return BelongsTo

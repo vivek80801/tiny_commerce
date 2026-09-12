@@ -88,7 +88,7 @@
             & label {
                 @apply text-xl mb-3;
             }
-            & input{
+            & input, textarea{
                 @apply p-4 border-2 rounded border-gray-400
                     outline-blue-600
                 ;

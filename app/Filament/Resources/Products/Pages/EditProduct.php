@@ -16,4 +16,10 @@ class EditProduct extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['price'] = $data['price'] / 100;
+        return $data;
+    }
 }
