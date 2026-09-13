@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,7 @@ Route::group(['middleware' => ['guest']], function () {
 Route::group(['middleware' => ['auth']], function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
+    Route::get('/category', [CategoryController::class, 'index'])->name('category');
     Route::group(['prefix' => '/checkout'], function () {
         Route::get('/', [CheckoutController::class, 'index'])->name('checkout');
         Route::post('/', [CheckoutController::class, 'store']);

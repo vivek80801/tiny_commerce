@@ -31,3 +31,18 @@ php artisan migrate:fresh --seed
 php artisan serve
 
 ```
+
+This application also have  schedular for cleaning up Cart. you would need to run schedular and queue worker both
+Run these two commands in two  terminal sessions
+
+```sh
+php artisan schedule:work
+
+php artisan queue:work
+```
+currently, Cart clean up runs every minute. but, you can change that in `routes/console.php`. change this line to your liking
+
+```php
+    Schedule::job(new CleanTmpCarts)->everyMinute();
+```
+

@@ -4,6 +4,21 @@
 
 @section("content")
     <div class="products-container">
+        <div class="flex justify-around items-center">
+            <div></div>
+            <div>
+                <form class="flex justify-between items-center m-2" action="{{route('home')}}" method="GET">
+                    <input
+                        class="border-3 m-2 rounded p-4 border-gray-400 outline-blue-600"
+                        type="text"
+                        name="search"
+                        placeholder="Serach Product"
+                        value="{{old('search')}}"
+                    />
+                    <button type="submit" class="">Search</button>
+                </form>
+            </div>
+        </div>
         <div class="products">
             @forelse($products as $product)
                 <div class="product">

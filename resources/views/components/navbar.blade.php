@@ -9,6 +9,7 @@
         @endguest
         @auth
             <li><a href="{{route('dashboard')}}">Dashboard</a></li>
+            <li><a href="{{route('category')}}">Category</a></li>
             <li>
                 <form action="{{route('logout')}}" method="post">
                     @csrf
