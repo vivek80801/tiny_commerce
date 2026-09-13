@@ -1,22 +1,25 @@
-# Ecommerce website
+# Tiny Commerce
 
-This is a very tiny ecommerce website source code. It is written in php and laravel. It uses filament for admin panel. 
-User can see products, add to carts products and then  checkout. it will autometically create order. admin can manage products, users, orders, carts. as a user you also add address  when you do checkout.
+A lightweight e-commerce application built with PHP, Laravel, and Filament. 
+
+## Features
+* Product catalog with search and price filtering
+* Guest cart system with automatic migration to user carts upon login/registration
+* Secure checkout flow with address management
+* Filament-powered admin panel for managing products, users, orders, and carts
+* Background queue worker and scheduler for cleaning up temporary guest carts
 
 ## Requirements
-
-php8.3
-composer
-node
-sqlite
+* PHP 8.3
+* Composer
+* Node.js & NPM
+* SQLite
 
 ## Get Started
 
-clean the repo
-
 ```sh
 
-git clone https://github.com/vivek80801/tiny_commerce.git && cd tiny_commerce
+git clone [https://github.com/vivek80801/tiny_commerce.git](https://github.com/vivek80801/tiny_commerce.git) && cd tiny_commerce
 
 cp .env.example .env
 
@@ -30,19 +33,21 @@ php artisan migrate:fresh --seed
 
 php artisan serve
 
-```
+```sh
 
-This application also have  schedular for cleaning up Cart. you would need to run schedular and queue worker both
-Run these two commands in two  terminal sessions
+## Background Services
+
+This application uses a scheduled job to clean up temporary guest carts every minute. Run these two commands in separate terminal sessions
 
 ```sh
+
 php artisan schedule:work
 
 php artisan queue:work
 ```
-currently, Cart clean up runs every minute. but, you can change that in `routes/console.php`. change this line to your liking
+
+You can adjust the schedule frequency in `routes/console.php`:
 
 ```php
-    Schedule::job(new CleanTmpCarts)->everyMinute();
+Schedule::job(new CleanTmpCarts)->everyMinute();
 ```
-
