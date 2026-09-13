@@ -15,9 +15,30 @@
                         placeholder="Serach Product"
                         value="{{old('search')}}"
                     />
-                    <button type="submit" class="">Search</button>
+                    <button type="submit">Search</button>
                 </form>
             </div>
+        </div>
+        <div class="flex justify-around items-center flex-col">
+            <h3>Price Filters</h3>
+            <form class="flex justify-around items-center flex-col" action="{{route('home')}}" method="GET">
+                <input
+                    class="border-3 m-2 rounded p-4 border-gray-400 outline-blue-600"
+                    type="number"
+                    name="min_price"
+                    placeholder="min Price"
+                    value="{{old('min_price')}}"
+                />
+
+                <input
+                    class="border-3 m-2 rounded p-4 border-gray-400 outline-blue-600"
+                    type="number"
+                    name="max_price"
+                    placeholder="max Price"
+                    value="{{old('max_price')}}"
+                />
+                <button type="submit">Filter</button>
+            </form>
         </div>
         <div class="products">
             @forelse($products as $product)
@@ -25,6 +46,7 @@
                     <img src="/storage/uploads/{{$product->image->filename}}" alt="Product Image">
                     <h4>{{$product->name}}</h4>
                     <b>&#x20B9;{{ $product->getPrice() }}</b>
+                    <span>Category: {{$product->category->name}}</span>
                     @if($product->quantity <= 0)
                         <span class="bg-yellow-300 p-2 rounded text-red-600">Sold</span>
                     @elseif($product->quantity <= 20)

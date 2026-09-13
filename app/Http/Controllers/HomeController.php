@@ -39,7 +39,24 @@ class HomeController extends Controller
             }
         }
 
-        $products = $query->paginate(10);
+        if(
+            request()->query('min_price') ||
+            request()->query('max_price')
+        )
+        {
+            $minPrice = request()->query('min_price') ?? 0;
+            $maxPrice = request()->query('max_price') ?? 0;
+
+            $query = Product::where([
+                ["price", ">=", (int) $minPrice * 100],
+                ["price", "<=", (int) $maxPrice * 100],
+            ]);
+        }
+
+        $products = $query
+            ->paginate(10)
+            ->withQueryString()
+        ;
 
         request()->flash();
 
