@@ -22,6 +22,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/', [CheckoutController::class, 'index'])->name('checkout');
         Route::post('/', [CheckoutController::class, 'store']);
     });
+    Route::get('/buynow/{product}', [CheckoutController::class, 'buynow'])->name('buynow');
+    Route::get('/orderdetail/{order}', [CheckoutController::class, 'orderDetail'])->name('orderdetail');
 });
 
 Route::group(['prefix' => '/cart'], function () {

@@ -17,11 +17,19 @@
                     @endif
                     <p>{{$product->description}}</p>
                     @if($product->quantity > 0)
-                        <div class="flex justify-between items-center w-full">
-                            <button class="bg-pink-600 hover:bg-pink-800 text-white p-2 mt-2 rounded cursor-pointer">Buy Now</button>
-                            <button class="bg-blue-600 hover:bg-blue-800 text-white p-2 mt-2 rounded cursor-pointer">
-                                <a href="{{route('cart.add', $product->id)}}">Add To Cart</a>
-                            </button>
+                        <div class="flex @guest justify-center @endguest @auth justify-between @endauth items-center w-full">
+                            @auth
+                                <a href="{{route('buynow', $product->id)}}">
+                                    <button class="bg-pink-600 hover:bg-pink-800 text-white p-2 mt-2 rounded cursor-pointer">
+                                        Buy Now
+                                    </button>
+                                </a>
+                            @endauth
+                            <a href="{{route('cart.add', $product->id)}}">
+                                <button class="bg-blue-600 hover:bg-blue-800 text-white p-2 mt-2 rounded cursor-pointer">
+                                    Add To Cart
+                                </button>
+                            </a>
                         </div>
                     @endif
                 </div>

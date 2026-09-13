@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\Cart;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -153,6 +155,14 @@ class AuthController extends Controller
 
     public function dashboard(): View
     {
-        return view('auth.dashboard');
+        $user = User::find(auth()->user()->id);
+        $addresses = Address::where('user_id', auth()->user()->id)->get();
+        $orders = Order::where('user_id', auth()->user()->id)->paginate(5);
+
+        return view('auth.dashboard', compact(
+            'user',
+            'addresses',
+            'orders',
+        ));
     }
 }
