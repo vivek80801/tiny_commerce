@@ -10,8 +10,10 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
+
+use function App\Helpers\authUser;
+use function App\Helpers\getGuestToken;
 
 class AuthController extends Controller
 {
@@ -39,7 +41,7 @@ class AuthController extends Controller
             'password' => $request->password,
         ]);
 
-        $token = Cookie::get('guest_token');
+        $token = getGuestToken();
 
         if ($token) {
             $cart_ids = Cart::where('guest_token', $token)
@@ -86,12 +88,16 @@ class AuthController extends Controller
             $request->session()->regenerate();
             $request->session()->regenerateToken();
             if (auth()->user()->is_admin) {
-                return redirect()->to(route('filament.admin.auth.login'))->with('success', 'you are logged in');
+                return redirect()
+                    ->to(route('filament.admin.auth.login'))
+                    ->with('success', 'you are logged in');
             } else {
-                $token = Cookie::get('guest_token');
+                $token = getGuestToken();
 
                 if ($token) {
-                    $carts = Cart::where('user_id', auth()->user()->id)->get();
+                    $carts = Cart::where(
+                        'user_id', authUser()->id
+                    )->get();
 
                     if (count($carts) > 0) {
                         $tmp_carts = Cart::where('guest_token', $token)->get();
@@ -99,18 +105,16 @@ class AuthController extends Controller
                         foreach ($tmp_carts as $cart) {
                             $cart_item = Cart::where([
                                 ['product_id', $cart->product->id],
-                                ['user_id', auth()->user()->id],
+                                ['user_id', authUser()->id],
                             ])->first();
 
                             if ($cart_item) {
                                 $cart_item->increment('quantity');
-                                $cart_item->save();
-
                             } else {
                                 Cart::create([
-                                    'product_id' => $cart->product->id,
                                     'quantity' => 1,
-                                    'user_id' => auth()->user()->id,
+                                    'product_id' => $cart->product->id,
+                                    'user_id' => authUser()->id,
                                 ]);
                             }
 
@@ -125,20 +129,27 @@ class AuthController extends Controller
                             ->whereIn('id', $cart_ids)
                             ->update(
                                 [
-                                    'user_id' => auth()->user()->id,
+                                    'user_id' => authUser()->id,
                                     'guest_token' => null,
                                 ]
                             );
                     }
                 }
 
-                return redirect()->to(route('dashboard'))->with('success', 'you are logged in');
+                return redirect()
+                    ->to(route('dashboard'))
+                    ->with('success', 'you are logged in');
             }
         } else {
-            return redirect()->to(route('login'))->withErrors(['auth' => 'credentials are wrong'])->withInput([
-                'name' => $request->name,
-                'email' => $request->email,
-            ]);
+            return redirect()
+                ->to(route('login'))
+                ->withErrors(
+                    ['auth' => 'credentials are wrong']
+                )
+                ->withInput([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                ]);
         }
     }
 

@@ -12,7 +12,7 @@ A lightweight e-commerce application built with PHP, Laravel, and Filament.
 ## Requirements
 * PHP 8.3
 * Composer
-* Node.js & NPM
+* Node.js and npm
 * SQLite
 
 ## Get Started
@@ -25,15 +25,19 @@ cp .env.example .env
 
 composer install && npm install
 
+npm run build
+
 mkdir -p storage/app/public/uploads
 
 php artisan storage:link
 
 php artisan migrate:fresh --seed
 
+composer dump-autoload
+
 php artisan serve
 
-```sh
+```
 
 ## Background Services
 
