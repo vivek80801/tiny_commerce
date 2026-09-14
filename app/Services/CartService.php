@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Models\Cart;
 use App\Models\Product;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 
 use function App\Helpers\authUser;
 use function App\Helpers\createGuestToken;
@@ -13,10 +13,9 @@ use function App\Helpers\getGuestToken;
 
 class CartService
 {
-    public function __construct
-    (
+    public function __construct(
         private Cart $cart,
-    ) { }
+    ) {}
 
     public function getCart(): LengthAwarePaginator
     {
@@ -44,8 +43,7 @@ class CartService
         $token = getGuestToken();
         $userId = Auth::check() ? authUser()->id : null;
 
-        if(!Auth::check() && !$token)
-        {
+        if (! Auth::check() && ! $token) {
             $uuid = createGuestToken();
             $this->createGuestCart(
                 $product,
@@ -61,13 +59,12 @@ class CartService
             $userId,
         );
 
-        if($cart)
-        {
-            $cart->increment("quantity");
-        } else if(Auth::check()) {
+        if ($cart) {
+            $cart->increment('quantity');
+        } elseif (Auth::check()) {
 
             $this->createUserCart($product, $userId);
-        } else if($token) {
+        } elseif ($token) {
 
             $this->createGuestCart($product, $token);
         }
@@ -84,8 +81,7 @@ class CartService
             $userId,
         );
 
-        if($cart)
-        {
+        if ($cart) {
             $cart->increment('quantity');
         }
     }
@@ -96,8 +92,7 @@ class CartService
         $userId = Auth::check() ? authUser()->id : null;
 
         $cart = $this->getTheCart($product, $token, $userId);
-        if($cart)
-        {
+        if ($cart) {
             if ($cart->quantity <= 1) {
                 $cart->delete();
 
@@ -109,12 +104,10 @@ class CartService
         return $cart;
     }
 
-    public function createGuestCart
-    (
+    public function createGuestCart(
         Product $product,
         string $token,
-    ): Cart
-    {
+    ): Cart {
         $cart = $this->cart::create([
             'quantity' => 1,
             'product_id' => $product->id,
@@ -124,12 +117,10 @@ class CartService
         return $cart;
     }
 
-    public function createUserCart
-    (
+    public function createUserCart(
         Product $product,
         int $userId
-    ): Cart
-    {
+    ): Cart {
         $cart = $this->cart::create([
             'quantity' => 1,
             'product_id' => $product->id,
@@ -139,13 +130,11 @@ class CartService
         return $cart;
     }
 
-    public function getTheCart
-    (
+    public function getTheCart(
         Product $product,
         ?string $token,
         ?int $userId,
-    ): Cart
-    {
+    ): Cart {
         $attributes = [
             ['product_id', $product->id],
         ];
@@ -153,13 +142,13 @@ class CartService
         if (Auth::check()) {
             array_push(
                 $attributes,
-                ["user_id" => $userId],
+                ['user_id' => $userId],
             );
         } else {
             if ($token) {
                 array_push(
                     $attributes,
-                    ["guest_token" => $token],
+                    ['guest_token' => $token],
                 );
             }
         }

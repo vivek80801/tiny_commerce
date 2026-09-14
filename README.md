@@ -19,22 +19,43 @@ A lightweight e-commerce application built with PHP, Laravel, and Filament.
 
 ```sh
 
-git clone [https://github.com/vivek80801/tiny_commerce.git](https://github.com/vivek80801/tiny_commerce.git) && cd tiny_commerce
+git clone https://github.com/vivek80801/tiny_commerce.git && cd tiny_commerce
+```
+```sh
+# In Case if you  are forking the repo
+# git clone https://github.com/your_user_name/tiny_commerce.git && cd tiny_commerce
 
+```
+```sh
 cp .env.example .env
 
+```
+```sh
 composer install && npm install
 
+```
+```sh
 npm run build
-
+```
+```sh
 mkdir -p storage/app/public/uploads
+```
 
+```sh
 php artisan storage:link
+```
+
+```sh
 
 php artisan migrate:fresh --seed
+```
 
+```sh
 composer dump-autoload
 
+```
+
+```sh
 php artisan serve
 
 ```
@@ -46,7 +67,8 @@ This application uses a scheduled job to clean up temporary guest carts every mi
 ```sh
 
 php artisan schedule:work
-
+```
+```sh
 php artisan queue:work
 ```
 

@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Address;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\Address;
 
 use function App\Helpers\authUser;
 
@@ -29,10 +29,9 @@ class CheckoutRequest extends FormRequest
             'user_id', authUser()->id
         )->first();
 
-        if($address)
-        {
+        if ($address) {
             return [
-                "address" => "required",
+                'address' => 'required',
             ];
         } else {
             return [

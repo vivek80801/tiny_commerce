@@ -12,11 +12,9 @@ use function App\Helpers\getGuestToken;
 
 class CartController extends Controller
 {
-    public function __construct
-    (
+    public function __construct(
         private CartService $cartService
-    )
-    {}
+    ) {}
 
     public function index(): View
     {
@@ -38,8 +36,7 @@ class CartController extends Controller
     {
         $token = getGuestToken();
 
-        if(!Auth::check() && !$token)
-        {
+        if (! Auth::check() && ! $token) {
             return redirect()
                 ->to(route('cart.index'))
                 ->with('error', "you don't have item in cart");
@@ -55,8 +52,7 @@ class CartController extends Controller
     {
         $token = getGuestToken();
 
-        if(!Auth::check() && !$token)
-        {
+        if (! Auth::check() && ! $token) {
             return redirect()
                 ->to(route('cart.index'))
                 ->with('error', "you don't have item in cart");
