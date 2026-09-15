@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -54,13 +55,19 @@ class CheckoutService
                     $cart->product->id
                 );
 
-                $product->quantity -= (int) $cart->quantity;
+                if ((int) $product->quantity >= (int) $cart->quantity) {
+                    $product->quantity -= (int) $cart->quantity;
+                } else {
+                    $product->quantity = 0;
+                }
                 $product->save();
 
                 $cart->delete();
             }
+            DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
+            dd($e->getMessage());
             Log::error($e);
         }
     }
@@ -94,8 +101,8 @@ class CheckoutService
         array $newAddress,
         int $userId,
     ): Address {
-        $address = $this->address::where('
-            user_id', authUser()->id
+        $address = $this->address::where(
+            'user_id', authUser()->id
         )->first();
 
         if ($address) {
@@ -120,7 +127,7 @@ class CheckoutService
         return $address;
     }
 
-    public function getCarts(int $userId): Cart
+    public function getCarts(int $userId): Collection
     {
         $carts = $this->cart::join(
             'products', 'carts.product_id', '=', 'products.id'

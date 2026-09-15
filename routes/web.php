@@ -32,5 +32,5 @@ Route::group(['prefix' => '/cart'], function () {
     Route::get('/', [CartController::class, 'index'])->name('cart.index');
     Route::get('/{product}', [CartController::class, 'addToCart'])->name('cart.add');
     Route::get('/increment/{product}', [CartController::class, 'increment'])->name('cart.inc');
-    Route::get('/decrease/{product}', [CartController::class, 'decrease'])->name('cart.dec');
+    Route::get('/decrement/{product}', [CartController::class, 'decrement'])->name('cart.dec');
 });

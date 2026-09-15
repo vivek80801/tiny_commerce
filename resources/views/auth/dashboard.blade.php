@@ -5,8 +5,8 @@
 @section("content")
     <div class="flex justify-around items-center flex-col">
         <h1 class="m-3">Profile</h1>
-        <span>Name: <b>{{$user->name}}</b></span>
-        <span>Email: {{$user->email}}</span>
+        <span>Name: <b>{{auth()->user()->name}}</b></span>
+        <span>Email: {{auth()->user()->email}}</span>
         <div class="overflow-x-auto">
             <h2 class="m-3">Orders</h2>
             <table class="min-w-full divide-y divide-gray-200">

@@ -9,7 +9,12 @@ class CategoryController extends Controller
 {
     public function index(): View
     {
-        $categories = Category::paginate(10);
+        $categories = Category::select(
+            'id',
+            'name',
+        )
+            ->with('image:id,filename,imageable_id')
+            ->paginate(10);
 
         return view('user.category', compact('categories'));
     }

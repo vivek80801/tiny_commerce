@@ -53,6 +53,16 @@ class HomeController extends Controller
         }
 
         $products = $query
+            ->select(
+                'id',
+                'name',
+                'price',
+                'quantity',
+                'description',
+                'category_id',
+            )
+            ->with('category:id,name')
+            ->with('image:id,filename,imageable_id')
             ->paginate(10)
             ->withQueryString();
 
