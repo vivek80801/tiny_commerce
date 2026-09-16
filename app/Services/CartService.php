@@ -22,13 +22,27 @@ class CartService
     public function getCart(): LengthAwarePaginator
     {
         $query = $this->cart::query();
+        $token = getGuestToken();
+
+        if(!Auth::check() && !$token)
+        {
+            $query = $query->where(
+                'user_id',
+                0
+            );
+
+            $carts = $query
+                ->orderByDesc('created_at')
+                ->paginate(10);
+
+            return $carts;
+        }
 
         if (Auth::check()) {
             $query = $query->where(
                 'user_id', authUser()->id
             );
         } else {
-            $token = getGuestToken();
 
             if ($token) {
                 $query = $query->where(
@@ -37,6 +51,7 @@ class CartService
                 );
             }
         }
+
 
         $query->join(
             'products as p',

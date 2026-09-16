@@ -47,19 +47,6 @@ class AuthController extends Controller
             'password' => $request->password,
         ]);
 
-        $token = getGuestToken();
-
-        if ($token) {
-            try {
-                $this
-                    ->cartService
-                    ->transferCartIfNotExists(
-                        $token
-                    );
-            } catch (Throwable $e) {
-                Log::error($e->getMessage());
-            }
-        }
 
         if (
             Auth::attempt([
@@ -69,6 +56,28 @@ class AuthController extends Controller
         ) {
             $request->session()->regenerate();
             $request->session()->regenerateToken();
+
+            $token = getGuestToken();
+            if ($token) {
+                try {
+                    $this
+                        ->cartService
+                        ->transferCartIfNotExists(
+                            $token
+                        );
+                } catch (Throwable $e) {
+                    Log::error($e->getMessage());
+
+                    return redirect()
+                        ->to(
+                            route('dashboard')
+                        )
+                        ->with(
+                            'error',
+                            'Cart can not be transfered'
+                        );
+                }
+            }
 
             return redirect()
                 ->to(
@@ -93,7 +102,9 @@ class AuthController extends Controller
         }
     }
 
-    public function login(Request $request): RedirectResponse
+    public function login(
+        Request $request
+    ): RedirectResponse
     {
         $request->validate([
             'email' => 'required|email',
@@ -109,7 +120,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
             $request->session()->regenerateToken();
             if (
-                auth()->user()->is_admin
+                authUser()->is_admin
             ) {
                 return redirect()
                     ->to(
@@ -124,15 +135,30 @@ class AuthController extends Controller
             } else {
                 $token = getGuestToken();
 
-                $this
-                    ->cartService
-                    ->transferGuestCartToUserCart(
-                        $token
-                    );
+                try{
+                    $this
+                        ->cartService
+                        ->transferGuestCartToUserCart(
+                            $token
+                        );
 
-                return redirect()
-                    ->to(route('dashboard'))
-                    ->with('success', 'you are logged in');
+                    return redirect()
+                        ->to(route('dashboard'))
+                        ->with(
+                            'success',
+                            'you are logged in'
+                        );
+
+                }catch(Throwable $e){
+                    Log::error($e->getMessage());
+
+                    return redirect()
+                        ->to(route('dashboard'))
+                        ->with(
+                            'error',
+                            'cart can not be transfered'
+                        );
+                }
             }
         } else {
             return redirect()

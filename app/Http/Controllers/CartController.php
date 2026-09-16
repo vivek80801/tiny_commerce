@@ -7,6 +7,7 @@ use App\Services\CartService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 use function App\Helpers\getGuestToken;
@@ -39,6 +40,8 @@ class CartController extends Controller
                 ->cartService
                 ->addToCart($product);
         } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
             return redirect()
                 ->to(route('cart.index'))
                 ->with(
@@ -73,6 +76,8 @@ class CartController extends Controller
             $this->cartService
                 ->increment($product);
         } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
             return redirect()
                 ->back()
                 ->with(
@@ -112,6 +117,7 @@ class CartController extends Controller
                 ->cartService
                 ->decrement($product);
         } catch (Throwable $e) {
+            Log::error($e->getMessage());
 
             return redirect()
                 ->back()

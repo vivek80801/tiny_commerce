@@ -14,6 +14,7 @@ use App\Services\CheckoutService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 
 use function App\Helpers\authUser;
 
@@ -81,7 +82,14 @@ class CheckoutController extends Controller
                 $request->all()
             );
         } catch (\Throwable $e) {
-            dd($e->getMessage());
+            Log::error($e->getMessage());
+
+            return redirect()
+                ->to(route('home'))
+                ->with(
+                    'error',
+                    'There is an issue when creating order'
+                );
         }
 
         return redirect()
