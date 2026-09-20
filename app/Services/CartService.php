@@ -2,16 +2,16 @@
 
 namespace App\Services;
 
+use App\Exceptions\CartQuantityCheckException;
+use App\Exceptions\CartTransferException;
 use App\Models\Cart;
 use App\Models\Product;
-use Error;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 use function App\Helpers\authUser;
-use function App\Helpers\createGuestToken;
-use function App\Helpers\getGuestToken;
 
 class CartService
 {
@@ -19,39 +19,15 @@ class CartService
         private Cart $cart,
     ) {}
 
-    public function getCart(): LengthAwarePaginator
+    /**
+     * @param  array<int, string>  $attribute
+     */
+    public function getCart(array $attribute): LengthAwarePaginator
     {
-        $query = $this->cart::query();
-        $token = getGuestToken();
-
-        if(!Auth::check() && !$token)
-        {
-            $query = $query->where(
-                'user_id',
-                0
+        $query = $this->cart::query()
+            ->where(
+                ...$attribute
             );
-
-            $carts = $query
-                ->orderByDesc('created_at')
-                ->paginate(10);
-
-            return $carts;
-        }
-
-        if (Auth::check()) {
-            $query = $query->where(
-                'user_id', authUser()->id
-            );
-        } else {
-
-            if ($token) {
-                $query = $query->where(
-                    'guest_token',
-                    $token
-                );
-            }
-        }
-
 
         $query->join(
             'products as p',
@@ -69,107 +45,95 @@ class CartService
         )
             ->with('product.image:id,filename,imageable_id');
 
-        $carts = $query
-            ->orderByDesc('created_at')
-            ->paginate(10);
-
-        return $carts;
+        return $this->getLatestCartFromQuery(
+            $query
+        );
     }
 
-    public function addToCart(Product $product): void
-    {
-        $token = getGuestToken();
-        $userId = Auth::check() ? authUser()->id : null;
-
-        if (! Auth::check() && ! $token) {
-            $uuid = createGuestToken();
-            $this->createGuestCart(
+    public function addToCart(
+        Product $product,
+        ?int $userId,
+        ?string $token,
+    ): void {
+        DB::transaction(function () use ($product, $userId, $token) {
+            $cart = $this->getTheCart(
                 $product,
-                $uuid,
+                $token,
+                $userId,
             );
 
-            $token = $uuid;
-        }
+            if ($cart) {
 
-        $cart = $this->getTheCart(
-            $product,
-            $token,
-            $userId,
-        );
+                $this->checkAndIncrementCart($product, $cart);
+            } elseif ($userId) {
 
-        if ($cart) {
-            $this->checkProductQuantityForIncreament(
-                $product,
-                $cart,
-            );
+                $this->createUserCart($product, $userId);
+            } elseif ($token) {
 
-            $cart->increment('quantity');
-        } elseif (Auth::check()) {
-
-            $this->createUserCart($product, $userId);
-        } elseif ($token) {
-
-            $this->createGuestCart($product, $token);
-        }
+                $this->createGuestCart($product, $token);
+            }
+        });
     }
 
-    public function increment(Product $product): void
-    {
-        $token = getGuestToken();
-        $userId = Auth::check() ? authUser()->id : null;
-
-        $cart = $this->getTheCart(
-            $product,
-            $token,
-            $userId,
-        );
-
-        if ($cart) {
-            $this->checkProductQuantityForIncreament(
+    public function increment(
+        Product $product,
+        ?int $userId,
+        ?string $token
+    ): void {
+        DB::transaction(function () use ($product, $userId, $token) {
+            $cart = $this->getTheCart(
                 $product,
-                $cart,
+                $token,
+                $userId,
             );
-            $cart->increment('quantity');
-        }
+
+            if ($cart) {
+                $this->checkAndIncrementCart($product, $cart);
+            }
+        });
     }
 
-    public function decrement(Product $product): Cart
-    {
-        $token = getGuestToken();
-        $userId = Auth::check() ? authUser()->id : null;
-
-        $cart = $this->getTheCart(
-            $product,
-            $token,
-            $userId,
-        );
-
-        if ($cart) {
-            $this->checkCartQuantityForDecrement(
-                $cart
+    public function decrement(
+        Product $product,
+        ?int $userId,
+        ?string $token
+    ): Cart {
+        return DB::transaction(function () use ($product, $userId, $token) {
+            $cart = $this->getTheCart(
+                $product,
+                $token,
+                $userId,
             );
-            $cart->decrement('quantity');
-        }
 
-        return $cart;
+            if ($cart) {
+                $this->checkAndDcrementCart($cart);
+            }
+
+            return $cart;
+        });
     }
 
     public function transferGuestCartToUserCart(
-        string $token
+        ?string $token,
+        ?int $userId,
     ): void {
         if ($token) {
             $carts = $this->cart::where(
-                'user_id', authUser()->id
+                'user_id', $userId
             )->get();
 
             if (count($carts) > 0) {
+                // it is one by one transfer of cart
                 $this->transferCartIfExists(
                     $token,
-                    authUser()->id
+                    $userId
                 );
             } else {
+                // it is bulk transer of cart
+
                 $this->transferCartIfNotExists(
-                    $token
+                    $token,
+                    $userId
                 );
             }
         }
@@ -188,7 +152,7 @@ class CartService
         return $cart;
     }
 
-    public function createUserCart(
+    private function createUserCart(
         Product $product,
         int $userId
     ): Cart {
@@ -201,7 +165,7 @@ class CartService
         return $cart;
     }
 
-    public function getTheCart(
+    private function getTheCart(
         Product $product,
         ?string $token,
         ?int $userId,
@@ -210,18 +174,18 @@ class CartService
             ['product_id', $product->id],
         ];
 
-        if (Auth::check()) {
+        if ($userId) {
             array_push(
                 $attributes,
                 ['user_id', $userId],
             );
+        } elseif ($token) {
+            array_push(
+                $attributes,
+                ['guest_token', $token],
+            );
         } else {
-            if ($token) {
-                array_push(
-                    $attributes,
-                    ['guest_token', $token],
-                );
-            }
+            return null;
         }
 
         $cart = $this
@@ -231,33 +195,35 @@ class CartService
         return $cart;
     }
 
-    public function checkProductQuantityForIncreament(
+    private function checkProductQuantityForIncreament(
         Product $product,
-        Cart $cart
-    ): void {
-        if (
-            $product->quantity <= $cart->quantity
-        ) {
-            throw new Error('
-                Cart Quantity can be more then product quantity
-            ');
+        Cart $cart,
+    ): bool {
+        $productStock = Product::query()
+            ->whereKey($product->id)
+            ->lockForUpdate()
+            ->first();
+
+        if ($cart->quantity > $productStock->quantity) {
+            return false;
+        } else {
+            return true;
         }
     }
 
-    public function checkCartQuantityForDecrement(
+    private function checkCartQuantityForDecrement(
         Cart $cart,
-    ): void {
+    ): bool {
         if ($cart->quantity <= 1) {
-            $cart->delete();
-
-            throw new Error(
-                'Cart quantity is '.$cart->quantity
-            );
+            return false;
+        } else {
+            return true;
         }
     }
 
     public function transferCartIfNotExists(
-        string $token
+        string $token,
+        int $userId,
     ): void {
 
         $cart_ids = $this->cart::where(
@@ -271,42 +237,113 @@ class CartService
             ->whereIn('id', $cart_ids)
             ->update(
                 [
-                    'user_id' => authUser()->id,
+                    'user_id' => $userId,
                     'guest_token' => null,
                 ]
             );
     }
 
-    public function transferCartIfExists(
+    private function transferCartIfExists(
         string $token,
         int $userId
     ): void {
-        $tmp_carts = $this->cart::where(
-            'guest_token',
-            $token
-        )->get();
+        try {
+            DB::beginTransaction();
+            $temCarts = $this->cart::where(
+                'guest_token',
+                $token
+            )->get();
 
-        foreach ($tmp_carts as $cart) {
-            $cart_item = $this->getTheCart(
-                $cart->product,
-                $token,
-                $userId,
-            );
+            foreach ($temCarts as $cart) {
+                $cartItem = $this->cart::where(
+                    'product_id',
+                    $cart->product_id
+                )
+                    ->where('user_id', $userId)
+                    ->lockForUpdate()
+                    ->first();
 
-            if ($cart_item) {
-                $this->checkProductQuantityForIncreament(
-                    $cart_item->product,
-                    $cart_item
-                );
-                $cart_item->increment('quantity');
-            } else {
-                $this->createUserCart(
-                    $cart->product->id,
-                    $userId,
-                );
+                if ($cartItem) {
+                    $this->checkAndIncrementCart(
+                        $cartItem->product,
+                        $cartItem,
+                    );
+
+                } else {
+                    $this->createUserCart(
+                        $cart->product,
+                        $userId,
+                    );
+                }
+
+                $cart->delete();
             }
+            DB::commit();
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error(
+                'user.id: '.authUser()->id."\n".
+                $e->getMessage()
+            );
+            throw new CartTransferException('
+                Cart Transfer Failed
+            ');
+        }
+    }
+
+    private function checkAndIncrementCart(
+        Product $product,
+        Cart $cart,
+    ) {
+        $isProductQuantityGood = $this->checkProductQuantityForIncreament(
+            $product,
+            $cart,
+        );
+
+        $this->incrementCart($isProductQuantityGood, $cart);
+    }
+
+    private function incrementCart(
+        bool $isProductQuantityGood,
+        Cart $cart,
+    ): void {
+        if ($isProductQuantityGood) {
+            $cart->increment('quantity');
+        } else {
+            throw new CartQuantityCheckException('
+                Product quantity in the cart can not be greater then product stock
+                ');
+        }
+    }
+
+    private function checkAndDcrementCart(
+        Cart $cart,
+    ) {
+        $isCartQuantityGood = $this->checkCartQuantityForDecrement(
+            $cart
+        );
+
+        $this->decrementCart($isCartQuantityGood, $cart);
+    }
+
+    private function decrementCart(
+        bool $isCartQuantityGood,
+        Cart $cart,
+    ) {
+        if ($isCartQuantityGood) {
+            $cart->decrement('quantity');
+        } else {
 
             $cart->delete();
         }
+    }
+
+    public function getLatestCartFromQuery(
+        Builder $query
+    ): LengthAwarePaginator {
+        return $query
+            ->orderByDesc('created_at')
+            ->paginate(10);
     }
 }

@@ -15,7 +15,7 @@ if (! function_exists('getGuestTokenKey')) {
 if (! function_exists('getGuestToken')) {
     function getGuestToken()
     {
-        return Cookie::get(getGuestTokenKey());
+        return Cookie::get(getGuestTokenKey()) ?? null;
     }
 }
 

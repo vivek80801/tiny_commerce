@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\CartQuantityCheckException;
 use App\Models\Product;
 use App\Services\CartService;
 use Illuminate\Contracts\View\View;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+use function App\Helpers\authUser;
+use function App\Helpers\createGuestToken;
 use function App\Helpers\getGuestToken;
 
 class CartController extends Controller
@@ -20,7 +23,37 @@ class CartController extends Controller
 
     public function index(): View
     {
-        $carts = $this->cartService->getCart();
+        $token = getGuestToken();
+        $attribute = [];
+        $carts = [];
+        $cartsSum = 0;
+
+        if (! Auth::check() && ! $token) {
+            return view(
+                'user.cart',
+                compact(
+                    'carts',
+                    'cartsSum'
+                )
+            );
+        }
+
+        if (Auth::check()) {
+            $attribute = [
+                'user_id',
+                authUser()->id,
+            ];
+        } else {
+            if ($token) {
+                $attribute = [
+                    'guest_token', $token,
+                ];
+            }
+        }
+
+        $carts = $this->cartService->getCart(
+            $attribute
+        );
         $cartsSum = $carts->sum('lineTotal');
 
         return view(
@@ -35,20 +68,30 @@ class CartController extends Controller
     public function addToCart(
         Product $product
     ): RedirectResponse {
-        try {
-            $this
-                ->cartService
-                ->addToCart($product);
-        } catch (Throwable $e) {
-            Log::error($e->getMessage());
+        $token = getGuestToken();
+        $userId = Auth::check() ? authUser()->id : null;
+
+        if (! Auth::check() && ! $token) {
+            $uuid = createGuestToken();
+
+            $this->cartService->createGuestCart(
+                $product,
+                $uuid,
+            );
 
             return redirect()
                 ->to(route('cart.index'))
                 ->with(
-                    'error',
-                    $e->getMessage()
+                    'success',
+                    'Product is add to your cart'
                 );
         }
+
+        $this->cartService->addToCart(
+            $product,
+            $userId,
+            $token,
+        );
 
         return redirect()
             ->to(route('cart.index'))
@@ -62,6 +105,7 @@ class CartController extends Controller
         Product $product
     ): RedirectResponse {
         $token = getGuestToken();
+        $userId = Auth::check() ? authUser()->id : null;
 
         if (! Auth::check() && ! $token) {
             return redirect()
@@ -74,8 +118,13 @@ class CartController extends Controller
 
         try {
             $this->cartService
-                ->increment($product);
-        } catch (Throwable $e) {
+                ->increment(
+                    $product,
+                    $userId,
+                    $token
+                );
+
+        } catch (CartQuantityCheckException $e) {
             Log::error($e->getMessage());
 
             return redirect()
@@ -83,6 +132,15 @@ class CartController extends Controller
                 ->with(
                     'error',
                     $e->getMessage()
+                );
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    'something went wrong'
                 );
         }
 
@@ -99,6 +157,7 @@ class CartController extends Controller
         Product $product
     ): RedirectResponse {
         $token = getGuestToken();
+        $userId = Auth::check() ? authUser()->id : null;
 
         if (! Auth::check() && ! $token) {
             return redirect()
@@ -115,15 +174,19 @@ class CartController extends Controller
 
             $this
                 ->cartService
-                ->decrement($product);
+                ->decrement(
+                    $product,
+                    $userId,
+                    $token,
+                );
         } catch (Throwable $e) {
             Log::error($e->getMessage());
 
             return redirect()
                 ->back()
                 ->with(
-                    'success',
-                    'product has been deleted from cart'
+                    'error',
+                    'Something went wrong'
                 );
         }
 

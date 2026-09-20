@@ -47,7 +47,6 @@ class AuthController extends Controller
             'password' => $request->password,
         ]);
 
-
         if (
             Auth::attempt([
                 'email' => $request->email,
@@ -63,7 +62,8 @@ class AuthController extends Controller
                     $this
                         ->cartService
                         ->transferCartIfNotExists(
-                            $token
+                            $token,
+                            authUser()->id
                         );
                 } catch (Throwable $e) {
                     Log::error($e->getMessage());
@@ -104,8 +104,7 @@ class AuthController extends Controller
 
     public function login(
         Request $request
-    ): RedirectResponse
-    {
+    ): RedirectResponse {
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -135,11 +134,12 @@ class AuthController extends Controller
             } else {
                 $token = getGuestToken();
 
-                try{
+                try {
                     $this
                         ->cartService
                         ->transferGuestCartToUserCart(
-                            $token
+                            $token,
+                            authUser()->id
                         );
 
                     return redirect()
@@ -149,7 +149,7 @@ class AuthController extends Controller
                             'you are logged in'
                         );
 
-                }catch(Throwable $e){
+                } catch (Throwable $e) {
                     Log::error($e->getMessage());
 
                     return redirect()
