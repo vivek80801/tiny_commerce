@@ -29,6 +29,9 @@ return new class extends Migration
             $table->uuid('guest_token')
                 ->nullable();
             $table->timestamps();
+
+            $table->unique(['user_id', 'product_id']);
+            $table->unique(['guest_token', 'product_id']);
         });
     }
 
