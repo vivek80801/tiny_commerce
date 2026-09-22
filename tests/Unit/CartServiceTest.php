@@ -3,21 +3,14 @@
 namespace Tests\Unit;
 
 use App\Exceptions\CartQuantityCheckException;
-use App\Exceptions\CartTransferException;
 use App\Models\Cart;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\CartService;
-
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-
-use Mockery;
 use Override;
-use Closure;
 
 class CartServiceTest extends TestCase
 {
@@ -52,9 +45,12 @@ class CartServiceTest extends TestCase
         );
 
         Category::factory()->create();
-        $this->products = Product::factory(2)->create();
 
-        $this->user = User::factory()->create();
+        $this->products = Product::factory(2)
+            ->create();
+
+        $this->user = User::factory()
+            ->create();
         $this->myToken = 'mytoken';
     }
 
@@ -67,7 +63,6 @@ class CartServiceTest extends TestCase
 
         $this->assertEmpty($carts);
     }
-
 
     public function test_create_cart_when_user_is_null_and_guest_is_null(): void
     {
@@ -85,6 +80,7 @@ class CartServiceTest extends TestCase
             'guest_token' => null,
         ]);
     }
+
     public function test_create_guest_cart(): void
     {
         $product = $this->products[0];
@@ -142,7 +138,7 @@ class CartServiceTest extends TestCase
             'quantity' => 2,
             'product_id' => $product->id,
             'user_id' => null,
-            "guest_token" => $this->myToken
+            'guest_token' => $this->myToken,
         ]);
     }
 
@@ -172,7 +168,7 @@ class CartServiceTest extends TestCase
             'quantity' => 3,
             'product_id' => $product->id,
             'user_id' => null,
-            "guest_token" => $this->myToken
+            'guest_token' => $this->myToken,
         ]);
     }
 
@@ -195,15 +191,15 @@ class CartServiceTest extends TestCase
         );
 
         $this->assertThrows(
-            fn() => $this->cartService->increment(
+            fn () => $this->cartService->increment(
                 $product,
                 null,
                 $this->myToken,
             ),
             CartQuantityCheckException::class,
-            "
+            '
                 Product quantity in the cart can not be greater then product stock
-            "
+            '
         );
     }
 
@@ -223,7 +219,6 @@ class CartServiceTest extends TestCase
             $this->myToken,
         );
 
-
         $this->cartService->increment(
             $product,
             null,
@@ -240,7 +235,7 @@ class CartServiceTest extends TestCase
             'quantity' => 2,
             'product_id' => $product->id,
             'user_id' => null,
-            "guest_token" => $this->myToken
+            'guest_token' => $this->myToken,
         ]);
     }
 
@@ -276,7 +271,7 @@ class CartServiceTest extends TestCase
             'quantity' => 2,
             'product_id' => $product->id,
             'user_id' => null,
-            "guest_token" => $this->myToken
+            'guest_token' => $this->myToken,
         ]);
     }
 
@@ -284,13 +279,13 @@ class CartServiceTest extends TestCase
     {
         $carts = $this->cartService->getCart([
             'user_id',
-            $this->user->id
+            $this->user->id,
         ]);
 
         $this->assertEmpty($carts);
     }
 
-    public function test_user_add_to_cart():void
+    public function test_user_add_to_cart(): void
     {
         $product = $this->products[0];
 
@@ -361,7 +356,7 @@ class CartServiceTest extends TestCase
             'quantity' => 3,
             'product_id' => $product->id,
             'user_id' => $this->user->id,
-            "guest_token" => null,
+            'guest_token' => null,
         ]);
     }
 
@@ -397,7 +392,7 @@ class CartServiceTest extends TestCase
             'quantity' => 2,
             'product_id' => $product->id,
             'user_id' => $this->user->id,
-            "guest_token" => null,
+            'guest_token' => null,
         ]);
     }
 

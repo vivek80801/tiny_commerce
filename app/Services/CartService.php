@@ -11,8 +11,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-use function App\Helpers\authUser;
-
 class CartService
 {
     public function __construct(
@@ -283,7 +281,7 @@ class CartService
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error(
-                'user.id: '.authUser()->id."\n".
+                'user.id: '.$userId."\n".
                 $e->getMessage()
             );
             throw new CartTransferException('

@@ -79,7 +79,8 @@ class CheckoutController extends Controller
     ): RedirectResponse {
         try {
             $this->checkoutService->createOrder(
-                $request->all()
+                $request->all(),
+                authUser()->id
             );
         } catch (\Throwable $e) {
             Log::error($e->getMessage());

@@ -135,12 +135,14 @@ class AuthController extends Controller
                 $token = getGuestToken();
 
                 try {
-                    $this
-                        ->cartService
-                        ->transferGuestCartToUserCart(
-                            $token,
-                            authUser()->id
-                        );
+                    if ($token) {
+                        $this
+                            ->cartService
+                            ->transferGuestCartToUserCart(
+                                $token,
+                                authUser()->id
+                            );
+                    }
 
                     return redirect()
                         ->to(route('dashboard'))

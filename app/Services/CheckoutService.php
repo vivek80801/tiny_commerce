@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-use function App\Helpers\authUser;
 use function App\Helpers\generateOrderId;
 
 class CheckoutService
@@ -29,18 +28,19 @@ class CheckoutService
      * @param  array<string, mixed>  $newAddress
      */
     public function createOrder(
-        array $newAddress
+        array $newAddress,
+        int $userId
     ): void {
-        DB::beginTransaction();
         try {
-            $address = $this->createAddress($newAddress, authUser()->id);
-            $carts = $this->getCarts(authUser()->id);
+            DB::beginTransaction();
+            $address = $this->createAddress($newAddress, $userId);
+            $carts = $this->getCarts($userId);
 
             $cartsTotal = $carts->sum('line_total');
             $orderId = generateOrderId(6);
 
             $order = $this->createSingleOrder(
-                authUser()->id,
+                $userId,
                 (int) $address->id,
                 $orderId,
                 (int) $cartsTotal,
@@ -68,7 +68,7 @@ class CheckoutService
         } catch (Throwable $e) {
             DB::rollBack();
             dd($e->getMessage());
-            Log::error($e);
+            Log::error($e->getMessage);
         }
     }
 
@@ -97,12 +97,12 @@ class CheckoutService
     /**
      * @param  array<string, mixed>  $newAddress
      */
-    public function createAddress(
+    private function createAddress(
         array $newAddress,
         int $userId,
     ): Address {
         $address = $this->address::where(
-            'user_id', authUser()->id
+            'user_id', $userId
         )->first();
 
         if ($address) {
@@ -127,7 +127,7 @@ class CheckoutService
         return $address;
     }
 
-    public function getCarts(int $userId): Collection
+    private function getCarts(int $userId): Collection
     {
         $carts = $this->cart::join(
             'products', 'carts.product_id', '=', 'products.id'
@@ -143,12 +143,12 @@ class CheckoutService
         return $carts;
     }
 
-    public function createSingleOrder(
+    private function createSingleOrder(
         int $userId,
         int $addressId,
         string $orderId,
         int $cartsTotal,
-    ) {
+    ): Order {
         $order = $this->order::create([
             'user_id' => $userId,
             'address_id' => $addressId,
@@ -159,10 +159,10 @@ class CheckoutService
         return $order;
     }
 
-    public function createOrderItem(
+    private function createOrderItem(
         Order $order,
         Cart $cart,
-    ) {
+    ): void {
         $this->orderItem::create([
             'order_id' => $order->id,
             'product_id' => $cart->product->id,
