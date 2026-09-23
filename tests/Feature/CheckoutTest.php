@@ -10,15 +10,17 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\State;
 use App\Models\User;
-use App\Services\CartService;
 use App\Services\CheckoutService;
+
 use Database\Seeders\CountrySeeder;
 use Database\Seeders\DistrictSeeder;
 use Database\Seeders\StateSeeder;
+
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Override;
 use Tests\TestCase;
+
+use Override;
 
 class CheckoutTest extends TestCase
 {
@@ -28,11 +30,6 @@ class CheckoutTest extends TestCase
      * @var CheckoutService
      */
     private $checkoutService;
-
-    /**
-     * @var CartService
-     */
-    private $cartService;
 
     /**
      * @var User
@@ -61,11 +58,10 @@ class CheckoutTest extends TestCase
 
         Category::factory()
             ->create();
+
         $this->product = Product::factory(2)
             ->create();
-        $this->cartService = app(
-            CartService::class
-        );
+
         $this->checkoutService = app(
             CheckoutService::class
         );
@@ -117,10 +113,11 @@ class CheckoutTest extends TestCase
                 'HTTP_X-Requested-With' => 'XMLHttpRequest',
             ])
             ->get(
-                route('checkout'),
-                [
-                    'country_id' => $country->id,
-                ]
+                route('checkout',
+                    [
+                        'country_id' => $country->id,
+                    ]
+                )
             );
 
         $response->assertStatus(200);
@@ -136,11 +133,18 @@ class CheckoutTest extends TestCase
                 'HTTP_X-Requested-With' => 'XMLHttpRequest',
             ])
             ->get(
-                route('checkout'),
-                [
+                route('checkout', [
                     'state_id' => $state->id,
-                ]
+                ])
             );
+        $response->assertJsonStructure([
+            "data" => [
+                "*" => [
+                    "id",
+                    "name",
+                ]
+            ]
+        ]);
 
         $response->assertStatus(200);
     }
@@ -150,19 +154,85 @@ class CheckoutTest extends TestCase
         $this->actingAs($this->user);
 
         $response = $this->post(
-            route('checkout'),
+            route('checkout',
+                [
+                    'name' => $this
+                    ->address['name'],
+
+                    'phone_number' => $this
+                    ->address['phone_number'],
+
+                    'country' => $this
+                    ->address['country'],
+
+                    'state' => $this
+                    ->address['state'],
+
+                    'district' => $this
+                    ->address['district'],
+
+                    'pin_code' => $this
+                    ->address['pin_code'],
+
+                    'address' => $this
+                    ->address['address'],
+
+                    'house_number' => $this
+                    ->address['house_number'],
+
+                    'city' => $this->address['city'],
+                ]
+            )
+        );
+
+        $address = Address::where(
+            "user_id",
+            $this->user->id
+        )->first();
+
+        $this->assertDatabaseHas("orders", [
+            "user_id" => $this->user->id,
+            "address_id" => $address->id,
+        ]);
+
+        $this->assertDatabaseHas("addresses", [
+            "user_id" => $this->user->id,
+        ]);
+
+        $response->assertStatus(302);
+    }
+
+    public function test_checkout_post_with_already_address(): void
+    {
+        $this->actingAs($this->user);
+
+        $address = Address::create(
             [
                 'name' => $this->address['name'],
-                'phone_number' => $this->address['phone_number'],
-                'country' => $this->address['country'],
-                'state' => $this->address['state'],
-                'district' => $this->address['district'],
+                'user_id' => $this->user->id,
+                'phone' => $this->address['phone_number'],
+                'country_id' => $this->address['country'],
+                'state_id' => $this->address['state'],
+                'district_id' => $this->address['district'],
                 'pin_code' => $this->address['pin_code'],
                 'address' => $this->address['address'],
                 'house_number' => $this->address['house_number'],
                 'city' => $this->address['city'],
             ]
         );
+
+        $response = $this->post(
+            route('checkout',
+                [
+                    'address' => $address->id
+                ]
+            )
+        );
+
+        $this->assertDatabaseHas("orders", [
+            "user_id" => $this->user->id,
+            "address_id" => $address->id
+        ]);
 
         $response->assertStatus(302);
     }

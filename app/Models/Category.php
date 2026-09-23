@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Product;
+use App\Models\Image;
+
 use Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;

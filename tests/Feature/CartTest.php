@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\CleanTmpCarts;
+use App\Models\Cart;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
@@ -388,5 +390,27 @@ class CartTest extends TestCase
         );
 
         $response->assertStatus(302);
+    }
+
+    public function test_user_cart_clean(): void
+    {
+        $product = $this->product[0];
+        $token = "mytoken";
+
+        Cart::create([
+            "product_id" => $product->id,
+            "quantity" => 1,
+            "user_id" => null,
+            "guest_token" => $token,
+        ]);
+
+        CleanTmpCarts::dispatch();
+
+        $this->assertDatabaseMissing("carts", [
+            "product_id" => $product->id,
+            "quantity" => 1,
+            "user_id" => null,
+            "guest_token" => $token,
+        ]);
     }
 }
