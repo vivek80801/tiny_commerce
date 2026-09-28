@@ -14,12 +14,15 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingBag;
+
+    protected static string|UnitEnum|null  $navigationGroup = "Ecommerce";
 
     protected static ?string $recordTitleAttribute = 'order_id';
 
@@ -38,6 +41,11 @@ class OrderResource extends Resource
         return [
             //
         ];
+    }
+
+    protected function handleRecordCreation( array $data)
+    {
+        dd($data);
     }
 
     public static function getPages(): array
