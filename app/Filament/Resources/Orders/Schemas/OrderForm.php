@@ -25,77 +25,70 @@ class OrderForm
                     ->preload()
                     ->required(),
 
-                Repeater::make("order_item")
-                    ->relationship("orderItem")
+                Repeater::make('order_item')
+                    ->relationship('orderItem')
                     ->schema([
                         Select::make('product_id')
-                            ->relationship("product","name")
-                            ->label("Product")
+                            ->relationship('product', 'name')
+                            ->label('Product')
                             ->searchable()
                             ->live()
                             ->preload()
                             ->required()
                             ->afterStateUpdated(
-                                function($state, Set $set, Get $get)
-                                {
-                                    if(!$state)
-                                    {
+                                function ($state, Set $set, Get $get) {
+                                    if (! $state) {
                                         $set('price', null);
+
                                         return;
                                     }
 
                                     $product = Product::find($state);
                                     $set('price', $product?->getPrice());
 
-                                    $set("amount", $product
-                                        ? (float)$product?->getPrice() * (float) ($get("quantity") ? : (float) 0)
+                                    $set('amount', $product
+                                        ? (float) $product?->getPrice() * (float) ($get('quantity') ?: (float) 0)
                                         : (float) 0
                                     );
                                 }
-                            )
-                        ,
+                            ),
 
-                        TextInput::make("price")
-                            ->label("Price")
+                        TextInput::make('price')
+                            ->label('Price')
                             ->disabled()
                             ->dehydrated()
                             ->numeric()
                             ->required()
                             ->live()
-                            ->prefix('₹')
-                        ,
+                            ->prefix('₹'),
 
-                        TextInput::make("quantity")
-                            ->label("Quantity")
+                        TextInput::make('quantity')
+                            ->label('Quantity')
                             ->live()
                             ->numeric()
                             ->required()
                             ->default(1)
                             ->afterStateUpdated(
-                                function($state, Set $set, Get $get)
-                                {
-                                    $product = Product::find($get("product_id"));
+                                function ($state, Set $set, Get $get) {
+                                    $product = Product::find($get('product_id'));
 
                                     $set('price', $product?->getPrice());
 
-                                    $set("amount", $product
-                                        ? ((int) $product?->price * (int) ($get("quantity") ? :  0)) / 100
+                                    $set('amount', $product
+                                        ? ((int) $product?->price * (int) ($get('quantity') ?: 0)) / 100
                                         : 0
                                     );
                                 }
-                            )
-                        ,
+                            ),
 
-                        TextInput::make("amount")
-                            ->label("Amount")
+                        TextInput::make('amount')
+                            ->label('Amount')
                             ->disabled()
                             ->dehydrated()
                             ->required()
-                            ->prefix('₹')
-                        ,
+                            ->prefix('₹'),
 
-                    ])->columnSpan('full')
-                ,
+                    ])->columnSpan('full'),
 
                 Section::make('Address')
                     ->relationship('address')

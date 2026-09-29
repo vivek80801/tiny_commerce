@@ -20,7 +20,7 @@ class CartFactory extends Factory
     public function definition(): array
     {
         return [
-            'quantity' => fake()->numberBetween(1, 10),
+            'quantity' => abs(fake()->numberBetween(5, 10)),
             'user_id' => User::inRandomOrder()->first(),
             'product_id' => Product::inRandomOrder()->first(),
         ];

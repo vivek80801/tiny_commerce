@@ -45,7 +45,7 @@ class ProductTest extends TestCase
 
     public function test_convert_price(): void
     {
-        $product = new Product(["price" => 3232]);
+        $product = new Product(['price' => 3232]);
 
         $this->assertEquals(32.32, $product->getPrice());
     }

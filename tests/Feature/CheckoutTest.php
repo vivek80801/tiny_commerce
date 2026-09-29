@@ -11,16 +11,13 @@ use App\Models\Product;
 use App\Models\State;
 use App\Models\User;
 use App\Services\CheckoutService;
-
 use Database\Seeders\CountrySeeder;
 use Database\Seeders\DistrictSeeder;
 use Database\Seeders\StateSeeder;
-
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-
 use Override;
+use Tests\TestCase;
 
 class CheckoutTest extends TestCase
 {
@@ -138,12 +135,12 @@ class CheckoutTest extends TestCase
                 ])
             );
         $response->assertJsonStructure([
-            "data" => [
-                "*" => [
-                    "id",
-                    "name",
-                ]
-            ]
+            'data' => [
+                '*' => [
+                    'id',
+                    'name',
+                ],
+            ],
         ]);
 
         $response->assertStatus(200);
@@ -157,28 +154,28 @@ class CheckoutTest extends TestCase
             route('checkout',
                 [
                     'name' => $this
-                    ->address['name'],
+                        ->address['name'],
 
                     'phone_number' => $this
-                    ->address['phone_number'],
+                        ->address['phone_number'],
 
                     'country' => $this
-                    ->address['country'],
+                        ->address['country'],
 
                     'state' => $this
-                    ->address['state'],
+                        ->address['state'],
 
                     'district' => $this
-                    ->address['district'],
+                        ->address['district'],
 
                     'pin_code' => $this
-                    ->address['pin_code'],
+                        ->address['pin_code'],
 
                     'address' => $this
-                    ->address['address'],
+                        ->address['address'],
 
                     'house_number' => $this
-                    ->address['house_number'],
+                        ->address['house_number'],
 
                     'city' => $this->address['city'],
                 ]
@@ -186,17 +183,17 @@ class CheckoutTest extends TestCase
         );
 
         $address = Address::where(
-            "user_id",
+            'user_id',
             $this->user->id
         )->first();
 
-        $this->assertDatabaseHas("orders", [
-            "user_id" => $this->user->id,
-            "address_id" => $address->id,
+        $this->assertDatabaseHas('orders', [
+            'user_id' => $this->user->id,
+            'address_id' => $address->id,
         ]);
 
-        $this->assertDatabaseHas("addresses", [
-            "user_id" => $this->user->id,
+        $this->assertDatabaseHas('addresses', [
+            'user_id' => $this->user->id,
         ]);
 
         $response->assertStatus(302);
@@ -224,14 +221,14 @@ class CheckoutTest extends TestCase
         $response = $this->post(
             route('checkout',
                 [
-                    'address' => $address->id
+                    'address' => $address->id,
                 ]
             )
         );
 
-        $this->assertDatabaseHas("orders", [
-            "user_id" => $this->user->id,
-            "address_id" => $address->id
+        $this->assertDatabaseHas('orders', [
+            'user_id' => $this->user->id,
+            'address_id' => $address->id,
         ]);
 
         $response->assertStatus(302);

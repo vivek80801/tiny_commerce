@@ -13,12 +13,15 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class CartResource extends Resource
 {
     protected static ?string $model = Cart::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingCart;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Ecommerce';
 
     protected static ?string $recordTitleAttribute = 'user.name';
 

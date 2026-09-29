@@ -9,7 +9,6 @@ use Illuminate\Foundation\Testing\TestCase;
 
 class CategoryTest extends TestCase
 {
-
     public function test_products_relationship(): void
     {
         $category = new Category;

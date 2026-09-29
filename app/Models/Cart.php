@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\User;
-use App\Models\Product;
-
 use Database\Factories\CartFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

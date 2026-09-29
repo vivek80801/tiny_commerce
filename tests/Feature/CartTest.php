@@ -395,22 +395,22 @@ class CartTest extends TestCase
     public function test_user_cart_clean(): void
     {
         $product = $this->product[0];
-        $token = "mytoken";
+        $token = 'mytoken';
 
         Cart::create([
-            "product_id" => $product->id,
-            "quantity" => 1,
-            "user_id" => null,
-            "guest_token" => $token,
+            'product_id' => $product->id,
+            'quantity' => 1,
+            'user_id' => null,
+            'guest_token' => $token,
         ]);
 
         CleanTmpCarts::dispatch();
 
-        $this->assertDatabaseMissing("carts", [
-            "product_id" => $product->id,
-            "quantity" => 1,
-            "user_id" => null,
-            "guest_token" => $token,
+        $this->assertDatabaseMissing('carts', [
+            'product_id' => $product->id,
+            'quantity' => 1,
+            'user_id' => null,
+            'guest_token' => $token,
         ]);
     }
 }

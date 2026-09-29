@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 
 use function App\Helpers\generateOrderId;
+use function App\Helpers\orderIdLength;
 
 class CheckoutService
 {
@@ -37,7 +38,9 @@ class CheckoutService
             $carts = $this->getCarts($userId);
 
             $cartsTotal = $carts->sum('line_total');
-            $orderId = generateOrderId(6);
+            $orderId = generateOrderId(
+                orderIdLength()
+            );
 
             $order = $this->createSingleOrder(
                 $userId,

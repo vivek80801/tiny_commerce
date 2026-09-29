@@ -31,7 +31,7 @@ class UserTest extends TestCase
         $this->assertTrue($user->canAccessPanel($panel));
     }
 
-    public function test_user_who_is_not_admin_should_not_access_admin_panel():void
+    public function test_user_who_is_not_admin_should_not_access_admin_panel(): void
     {
         $user = new User;
         $user->is_admin = false;
@@ -52,5 +52,4 @@ class UserTest extends TestCase
 
         $this->assertFalse($user->canAccessPanel($panel));
     }
-
 }

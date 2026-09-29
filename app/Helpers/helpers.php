@@ -55,3 +55,10 @@ if (! function_exists('generateOrderId')) {
         return (int) $result;
     }
 }
+
+if (! function_exists('orderIdLength')) {
+    function orderIdLength()
+    {
+        return 6;
+    }
+}
