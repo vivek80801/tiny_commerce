@@ -62,7 +62,7 @@
                                     </button>
                                 </a>
                             @endauth
-                            <a href="{{route('cart.add', $product->id)}}">
+                            <a href="{{route('cart.add', $product->id)}}?idempotency-key-cart={{$cartKey}}">
                                 <button class="bg-blue-600 hover:bg-blue-800 text-white p-2 mt-2 rounded cursor-pointer">
                                     Add To Cart
                                 </button>

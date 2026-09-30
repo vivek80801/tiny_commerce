@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Contracts\View\View;
 
+use function App\Helpers\setIdempontencyKey;
+
 class HomeController extends Controller
 {
     public function index(): View
     {
         $query = Product::query();
+        $cartKey = setIdempontencyKey("cart");
 
         if (request()->query('category')) {
             $query = Product::where(
@@ -68,6 +71,12 @@ class HomeController extends Controller
 
         request()->flash();
 
-        return view('welcome', compact('products'));
+        return view(
+            'welcome',
+            compact(
+                'products',
+                "cartKey",
+            )
+        );
     }
 }

@@ -14,6 +14,7 @@ use Throwable;
 use function App\Helpers\authUser;
 use function App\Helpers\createGuestToken;
 use function App\Helpers\getGuestToken;
+use function App\Helpers\getIdempotencyKey;
 
 class CartController extends Controller
 {
@@ -68,16 +69,44 @@ class CartController extends Controller
     public function addToCart(
         Product $product
     ): RedirectResponse {
-        $token = getGuestToken();
-        $userId = Auth::check() ? authUser()->id : null;
+        $cartKey = getIdempotencyKey("cart");
+        $isAlreadyAddToCart = session("processed:" . $cartKey);
+        $sessionKey = session($cartKey);
+        $comingKey = request()->query($cartKey);
 
-        if (! Auth::check() && ! $token) {
-            $uuid = createGuestToken();
+        if(
+            $sessionKey === $comingKey &&
+                !$isAlreadyAddToCart
+        )
+        {
+            $token = getGuestToken();
+            $userId = Auth::check() ? authUser()->id : null;
 
-            $this->cartService->createGuestCart(
+            if (! Auth::check() && ! $token) {
+                $uuid = createGuestToken();
+
+                $this->cartService->createGuestCart(
+                    $product,
+                    $uuid,
+                );
+
+                return redirect()
+                    ->to(route('cart.index'))
+                    ->with(
+                        'success',
+                        'Product is add to your cart'
+                    );
+            }
+
+            $this->cartService->addToCart(
                 $product,
-                $uuid,
+                $userId,
+                $token,
             );
+
+            session([
+                "processed:".$cartKey => true
+            ]);
 
             return redirect()
                 ->to(route('cart.index'))
@@ -86,19 +115,7 @@ class CartController extends Controller
                     'Product is add to your cart'
                 );
         }
-
-        $this->cartService->addToCart(
-            $product,
-            $userId,
-            $token,
-        );
-
-        return redirect()
-            ->to(route('cart.index'))
-            ->with(
-                'success',
-                'Product is add to your cart'
-            );
+        return redirect()->back();
     }
 
     public function increment(
