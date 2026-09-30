@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Address;
 use App\Models\Order;
 use App\Models\User;
+use App\Notifications\WelcomeUserNotification;
 use App\Services\CartService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -41,11 +42,13 @@ class AuthController extends Controller
             'password' => 'required|confirmed|min:5|max:20',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password,
         ]);
+
+        $user->notify(new WelcomeUserNotification());
 
         if (
             Auth::attempt([
