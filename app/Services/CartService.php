@@ -78,7 +78,12 @@ class CartService
         ?int $userId,
         ?string $token
     ): void {
-        DB::transaction(function () use ($product, $userId, $token) {
+        DB::transaction(
+            function () use (
+            $product,
+            $userId,
+            $token
+        ) {
             $cart = $this->getTheCart(
                 $product,
                 $token,
@@ -86,7 +91,10 @@ class CartService
             );
 
             if ($cart) {
-                $this->checkAndIncrementCart($product, $cart);
+                    $this->checkAndIncrementCart(
+                        $product,
+                        $cart
+                    );
             }
         });
     }
@@ -96,17 +104,20 @@ class CartService
         ?int $userId,
         ?string $token
     ): Cart {
-        return DB::transaction(function () use ($product, $userId, $token) {
+        return DB::transaction(
+            function () use (
+            $product,
+            $userId,
+            $token
+        ) {
             $cart = $this->getTheCart(
                 $product,
                 $token,
                 $userId,
             );
-
             if ($cart) {
                 $this->checkAndDcrementCart($cart);
             }
-
             return $cart;
         });
     }
@@ -121,14 +132,11 @@ class CartService
             )->get();
 
             if (count($carts) > 0) {
-                // it is one by one transfer of cart
                 $this->transferCartIfExists(
                     $token,
                     $userId
                 );
             } else {
-                // it is bulk transer of cart
-
                 $this->transferCartIfNotExists(
                     $token,
                     $userId
@@ -223,20 +231,16 @@ class CartService
         string $token,
         int $userId,
     ): void {
-
-        $cart_ids = $this->cart::where(
-            'guest_token',
-            $token
-        )
-            ->pluck('id')
-            ->toArray();
-
         DB::table('carts')
-            ->whereIn('id', $cart_ids)
+            ->where(
+                "guest_token",
+                $token
+            )
             ->update(
                 [
                     'user_id' => $userId,
                     'guest_token' => null,
+
                 ]
             );
     }
@@ -253,6 +257,7 @@ class CartService
             )->get();
 
             foreach ($temCarts as $cart) {
+                // I am aware that. It could cause N+1 query problem.
                 $cartItem = $this->cart::where(
                     'product_id',
                     $cart->product_id
@@ -294,12 +299,16 @@ class CartService
         Product $product,
         Cart $cart,
     ) {
-        $isProductQuantityGood = $this->checkProductQuantityForIncreament(
-            $product,
-            $cart,
-        );
+        $isProductQuantityGood = $this
+            ->checkProductQuantityForIncreament(
+                $product,
+                $cart,
+            );
 
-        $this->incrementCart($isProductQuantityGood, $cart);
+        $this->incrementCart(
+            $isProductQuantityGood,
+            $cart
+        );
     }
 
     private function incrementCart(
@@ -318,9 +327,10 @@ class CartService
     private function checkAndDcrementCart(
         Cart $cart,
     ) {
-        $isCartQuantityGood = $this->checkCartQuantityForDecrement(
-            $cart
-        );
+        $isCartQuantityGood = $this
+            ->checkCartQuantityForDecrement(
+                $cart
+            );
 
         $this->decrementCart($isCartQuantityGood, $cart);
     }
