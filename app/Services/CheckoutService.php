@@ -19,6 +19,7 @@ class CheckoutService
 {
     public function __construct(
         private Address $address,
+        private AddressService $addressService,
         private Cart $cart,
         private Order $order,
         private OrderItem $orderItem,
@@ -34,7 +35,12 @@ class CheckoutService
     ): void {
         try {
             DB::beginTransaction();
-            $address = $this->createAddress($newAddress, $userId);
+            $address = $this
+                ->addressService
+                ->createAddressForCheckout(
+                    $newAddress,
+                    $userId
+                );
             $carts = $this->getCarts($userId);
 
             $cartsTotal = $carts->sum('line_total');

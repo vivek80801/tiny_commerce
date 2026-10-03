@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\CreateAddressReq;
 use App\Http\Requests\CheckoutRequest;
-use App\Models\Address;
-use App\Models\Country;
-use App\Models\District;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use App\Models\State;
 use App\Services\CheckoutService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -20,58 +17,15 @@ use function App\Helpers\authUser;
 
 class CheckoutController extends Controller
 {
+    use CreateAddressReq;
+
     public function __construct(
         private CheckoutService $checkoutService
     ) {}
 
     public function index(): View|JsonResponse
     {
-        $countries = Country::all();
-        $states = State::where(
-            'country_id',
-            $countries[0]->id
-        )->get();
-
-        $addresses = Address::where(
-            'user_id', authUser()->id
-        )->get();
-
-        if (request()->ajax()) {
-            if (isset(request()->country_id)) {
-                $states = State::where(
-                    'country_id',
-                    request()->country_id
-                )
-                    ->select('name', 'id')->get();
-
-                return response()
-                    ->json(
-                        ['data' => $states]
-                    );
-            }
-
-            if (isset(request()->state_id)) {
-                $districts = District::where(
-                    'state_id', request()->state_id
-                )->select('name', 'id')
-                    ->get();
-
-                return response()
-                    ->json(
-                        ['data' => $districts]
-                    );
-            }
-
-        }
-
-        return view(
-            'user.checkout',
-            compact(
-                'countries',
-                'states',
-                'addresses',
-            )
-        );
+        return $this->getAddress('user.checkout');
     }
 
     public function store(

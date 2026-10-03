@@ -69,16 +69,15 @@ class CartController extends Controller
     public function addToCart(
         Product $product
     ): RedirectResponse {
-        $cartKey = getIdempotencyKey("cart");
-        $isAlreadyAddToCart = session("processed:" . $cartKey);
+        $cartKey = getIdempotencyKey('cart');
+        $isAlreadyAddToCart = session('processed:'.$cartKey);
         $sessionKey = session($cartKey);
         $comingKey = request()->query($cartKey);
 
-        if(
+        if (
             $sessionKey === $comingKey &&
-                !$isAlreadyAddToCart
-        )
-        {
+                ! $isAlreadyAddToCart
+        ) {
             $token = getGuestToken();
             $userId = Auth::check() ? authUser()->id : null;
 
@@ -105,7 +104,7 @@ class CartController extends Controller
             );
 
             session([
-                "processed:".$cartKey => true
+                'processed:'.$cartKey => true,
             ]);
 
             return redirect()
@@ -115,6 +114,7 @@ class CartController extends Controller
                     'Product is add to your cart'
                 );
         }
+
         return redirect()->back();
     }
 

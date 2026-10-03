@@ -80,23 +80,23 @@ class CartService
     ): void {
         DB::transaction(
             function () use (
-            $product,
-            $userId,
-            $token
-        ) {
-            $cart = $this->getTheCart(
                 $product,
-                $token,
                 $userId,
-            );
+                $token
+            ) {
+                $cart = $this->getTheCart(
+                    $product,
+                    $token,
+                    $userId,
+                );
 
-            if ($cart) {
+                if ($cart) {
                     $this->checkAndIncrementCart(
                         $product,
                         $cart
                     );
-            }
-        });
+                }
+            });
     }
 
     public function decrement(
@@ -106,20 +106,21 @@ class CartService
     ): Cart {
         return DB::transaction(
             function () use (
-            $product,
-            $userId,
-            $token
-        ) {
-            $cart = $this->getTheCart(
                 $product,
-                $token,
                 $userId,
-            );
-            if ($cart) {
-                $this->checkAndDcrementCart($cart);
-            }
-            return $cart;
-        });
+                $token
+            ) {
+                $cart = $this->getTheCart(
+                    $product,
+                    $token,
+                    $userId,
+                );
+                if ($cart) {
+                    $this->checkAndDcrementCart($cart);
+                }
+
+                return $cart;
+            });
     }
 
     public function transferGuestCartToUserCart(
@@ -233,7 +234,7 @@ class CartService
     ): void {
         DB::table('carts')
             ->where(
-                "guest_token",
+                'guest_token',
                 $token
             )
             ->update(

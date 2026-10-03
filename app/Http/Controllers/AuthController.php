@@ -48,7 +48,7 @@ class AuthController extends Controller
             'password' => $request->password,
         ]);
 
-        $user->notify(new WelcomeUserNotification());
+        $user->notify(new WelcomeUserNotification);
 
         if (
             Auth::attempt([

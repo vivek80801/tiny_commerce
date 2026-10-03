@@ -63,25 +63,24 @@ if (! function_exists('orderIdLength')) {
     }
 }
 
-if(!function_exists('getIdempotencyKey'))
-{
+if (! function_exists('getIdempotencyKey')) {
     function getIdempotencyKey(string $name)
     {
-        return "idempotency-key-" . $name;
+        return 'idempotency-key-'.$name;
     }
 }
 
-if(!function_exists('setIdempontencyKey'))
-{
+if (! function_exists('setIdempontencyKey')) {
     function setIdempontencyKey(string $name)
     {
         $uuid = Str::uuid();
         session(
             [
-                 getIdempotencyKey($name) => $uuid,
-                "processed:".getIdempotencyKey($name) => false,
+                getIdempotencyKey($name) => $uuid,
+                'processed:'.getIdempotencyKey($name) => false,
             ]
         );
+
         return $uuid;
     }
 }

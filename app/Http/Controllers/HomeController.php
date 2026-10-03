@@ -12,7 +12,7 @@ class HomeController extends Controller
     public function index(): View
     {
         $query = Product::query();
-        $cartKey = setIdempontencyKey("cart");
+        $cartKey = setIdempontencyKey('cart');
 
         if (request()->query('category')) {
             $query = Product::where(
@@ -75,7 +75,7 @@ class HomeController extends Controller
             'welcome',
             compact(
                 'products',
-                "cartKey",
+                'cartKey',
             )
         );
     }
