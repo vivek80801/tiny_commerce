@@ -2,27 +2,22 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Order;
+use App\Models\User;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
 
-class OrderChart extends ChartWidget
+class UserChart extends ChartWidget
 {
-    protected ?string $heading = 'Order Chart';
+    protected ?string $heading = 'User Chart';
 
-    protected int|string|array $columnSpan = 'full';
-
-    public ?string $filter = 'today';
+    protected string|int|array $columnSpan = 'full';
 
     protected function getData(): array
     {
         $activeFilter = $this->filter;
-
-        $startDate = Order::oldest()
+        $startDate = User::oldest()
             ->value('created_at');
-
-        $endDate = now();
 
         if ($activeFilter === 'week') {
             $startDate = now()->startOfWeek();
@@ -36,10 +31,10 @@ class OrderChart extends ChartWidget
             $startDate = now()->startOfYear();
         }
 
-        $data = Trend::model(Order::class)
+        $data = Trend::model(User::class)
             ->between(
                 start: $startDate,
-                end: $endDate,
+                end: now(),
             )
             ->perDay()
             ->count();
@@ -47,7 +42,7 @@ class OrderChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Order Chart',
+                    'label' => 'User Chart',
                     'data' => $data->map(
                         fn (TrendValue $value) => $value
                             ->aggregate
@@ -55,7 +50,8 @@ class OrderChart extends ChartWidget
                 ],
             ],
             'labels' => $data->map(
-                fn (TrendValue $value) => $value->date
+                fn (TrendValue $value) => $value
+                    ->date
             ),
         ];
     }
