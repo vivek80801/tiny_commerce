@@ -95,15 +95,23 @@
             }
         }
 
-        & button[type="submit"]{
+        & button[type="submit"], & input[type="submit"] {
             @apply bg-blue-600 p-3 rounded text-white
                 w-full cursor-pointer hover:bg-blue-800
+                disabled:bg-blue-500 disabled:cursor-wait
             ;
         }
 
         & .err-msg {
             @apply text-red-600 text-center font-bold;
         }
+    }
+
+    .overlay {
+        @apply hidden fixed top-0 w-full h-full
+            bg-black z-2 opacity-50 text-white
+            justify-center items-center flex-col
+        ;
     }
 }
 

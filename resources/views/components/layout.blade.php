@@ -15,6 +15,7 @@
         @stack("css")
     </head>
     <body>
+        <div class="overlay"></div>
         <x-navbar />
             @yield("content")
         <x-footer />

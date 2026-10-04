@@ -50,19 +50,6 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group([
-        'prefix' => '/cart',
-        'controller' => CartController::class,
-    ], function () {
-        Route::get('/', 'index')->name('cart.index');
-        Route::get('/{product}', 'addToCart')
-            ->name('cart.add');
-        Route::get('/increment/{product}', 'increment')
-            ->name('cart.inc');
-        Route::get('/decrement/{product}', 'decrement')
-            ->name('cart.dec');
-    });
-
-    Route::group([
         'prefix' => '/address',
         'controller' => AddressController::class,
     ], function () {
@@ -72,4 +59,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/', 'store')
             ->name('address.store');
     });
+});
+
+Route::group([
+    'prefix' => '/cart',
+    'controller' => CartController::class,
+], function () {
+    Route::get('/', 'index')->name('cart.index');
+    Route::get('/{product}', 'addToCart')
+        ->name('cart.add');
+    Route::get('/increment/{product}', 'increment')
+        ->name('cart.inc');
+    Route::get('/decrement/{product}', 'decrement')
+        ->name('cart.dec');
 });

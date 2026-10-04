@@ -15,6 +15,7 @@ use function App\Helpers\authUser;
 use function App\Helpers\createGuestToken;
 use function App\Helpers\getGuestToken;
 use function App\Helpers\getIdempotencyKey;
+use function App\Helpers\setIdempontencyKey;
 
 class CartController extends Controller
 {
@@ -28,6 +29,12 @@ class CartController extends Controller
         $attribute = [];
         $carts = [];
         $cartsSum = 0;
+        $incrementKey = setIdempontencyKey(
+            'cart-increment'
+        );
+        $decrementKey = setIdempontencyKey(
+            'cart-decrement'
+        );
 
         if (! Auth::check() && ! $token) {
             return view(
@@ -61,7 +68,9 @@ class CartController extends Controller
             'user.cart',
             compact(
                 'carts',
-                'cartsSum'
+                'cartsSum',
+                'incrementKey',
+                'decrementKey',
             )
         );
     }
@@ -123,42 +132,55 @@ class CartController extends Controller
     ): RedirectResponse {
         $token = getGuestToken();
         $userId = Auth::check() ? authUser()->id : null;
+        $cartIncrementKey = getIdempotencyKey('cart-increment');
+        $isCartIncremented = session('processed:'.$cartIncrementKey);
+        $sessionKey = session($cartIncrementKey);
+        $comingKey = request()->query($cartIncrementKey);
 
-        if (! Auth::check() && ! $token) {
-            return redirect()
-                ->to(route('cart.index'))
-                ->with(
-                    'error',
-                    "you don't have item in cart"
-                );
-        }
+        if (
+            $sessionKey === $comingKey &&
+                ! $isCartIncremented
+        ) {
+            session([
+                'processed:'.$cartIncrementKey => true,
+            ]);
 
-        try {
-            $this->cartService
-                ->increment(
-                    $product,
-                    $userId,
-                    $token
-                );
+            if (! Auth::check() && ! $token) {
+                return redirect()
+                    ->to(route('cart.index'))
+                    ->with(
+                        'error',
+                        "you don't have item in cart"
+                    );
+            }
 
-        } catch (CartQuantityCheckException $e) {
-            Log::error($e->getMessage());
+            try {
+                $this->cartService
+                    ->increment(
+                        $product,
+                        $userId,
+                        $token
+                    );
 
-            return redirect()
-                ->back()
-                ->with(
-                    'error',
-                    $e->getMessage()
-                );
-        } catch (Throwable $e) {
-            Log::error($e->getMessage());
+            } catch (CartQuantityCheckException $e) {
+                Log::error($e->getMessage());
 
-            return redirect()
-                ->back()
-                ->with(
-                    'error',
-                    'something went wrong'
-                );
+                return redirect()
+                    ->back()
+                    ->with(
+                        'error',
+                        $e->getMessage()
+                    );
+            } catch (Throwable $e) {
+                Log::error($e->getMessage());
+
+                return redirect()
+                    ->back()
+                    ->with(
+                        'error',
+                        'something went wrong'
+                    );
+            }
         }
 
         return redirect()
@@ -175,36 +197,49 @@ class CartController extends Controller
     ): RedirectResponse {
         $token = getGuestToken();
         $userId = Auth::check() ? authUser()->id : null;
+        $cartDecrementKey = getIdempotencyKey('cart-decrement');
+        $isCartDecrement = session('processed:'.$cartDecrementKey);
+        $sessionKey = session($cartDecrementKey);
+        $comingKey = request()->query($cartDecrementKey);
 
-        if (! Auth::check() && ! $token) {
-            return redirect()
-                ->to(
-                    route('cart.index')
-                )
-                ->with(
-                    'error',
-                    "you don't have item in cart"
-                );
-        }
+        if (
+            $sessionKey === $comingKey &&
+                ! $isCartDecrement
+        ) {
+            session([
+                'processed:'.$cartDecrementKey => true,
+            ]);
+            if (! Auth::check() && ! $token) {
+                return redirect()
+                    ->to(
+                        route('cart.index')
+                    )
+                    ->with(
+                        'error',
+                        "you don't have item in cart"
+                    );
+            }
 
-        try {
+            try {
 
-            $this
-                ->cartService
-                ->decrement(
-                    $product,
-                    $userId,
-                    $token,
-                );
-        } catch (Throwable $e) {
-            Log::error($e->getMessage());
+                $this
+                    ->cartService
+                    ->decrement(
+                        $product,
+                        $userId,
+                        $token,
+                    );
+            } catch (Throwable $e) {
+                Log::error($e->getMessage());
 
-            return redirect()
-                ->back()
-                ->with(
-                    'error',
-                    'Something went wrong'
-                );
+                return redirect()
+                    ->back()
+                    ->with(
+                        'error',
+                        'Something went wrong'
+                    );
+            }
+
         }
 
         return redirect()

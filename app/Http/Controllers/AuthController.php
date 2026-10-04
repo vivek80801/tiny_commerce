@@ -16,6 +16,8 @@ use Throwable;
 
 use function App\Helpers\authUser;
 use function App\Helpers\getGuestToken;
+use function App\Helpers\getIdempotencyKey;
+use function App\Helpers\setIdempontencyKey;
 
 class AuthController extends Controller
 {
@@ -25,7 +27,16 @@ class AuthController extends Controller
 
     public function registerView(): View
     {
-        return view('auth.register');
+        $registerKey = setIdempontencyKey(
+            'register'
+        );
+
+        return view(
+            'auth.register',
+            compact(
+                'registerKey',
+            )
+        );
     }
 
     public function loginView(): View
@@ -36,156 +47,203 @@ class AuthController extends Controller
     public function register(
         Request $request
     ): RedirectResponse {
-        $request->validate([
-            'name' => 'required|min:3|max:20',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|confirmed|min:5|max:20',
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password,
-        ]);
-
-        $user->notify(new WelcomeUserNotification);
+        $registerKey = getIdempotencyKey('register');
+        $isRegistered = session('processed:'.$registerKey);
+        $sessionKey = session($registerKey);
+        $comingKey = request()->query($registerKey);
 
         if (
-            Auth::attempt([
+            $sessionKey === $comingKey &&
+                ! $isRegistered
+        ) {
+            session([
+                'processed:'.$registerKey => true,
+            ]);
+
+            $request->validate([
+                'name' => 'required|min:3|max:20',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|confirmed|min:5|max:20',
+            ]);
+
+            $user = User::create([
+                'name' => $request->name,
                 'email' => $request->email,
                 'password' => $request->password,
-            ])
-        ) {
-            $request->session()->regenerate();
-            $request->session()->regenerateToken();
+            ]);
 
-            $token = getGuestToken();
-            if ($token) {
-                try {
-                    $this
-                        ->cartService
-                        ->transferCartIfNotExists(
-                            $token,
-                            authUser()->id
-                        );
-                } catch (Throwable $e) {
-                    Log::error($e->getMessage());
+            $user->notify(new WelcomeUserNotification);
 
-                    return redirect()
-                        ->to(
-                            route('dashboard')
-                        )
-                        ->with(
-                            'error',
-                            'Cart can not be transfered'
-                        );
-                }
-            }
-
-            return redirect()
-                ->to(
-                    route('dashboard')
-                )
-                ->with(
-                    'success',
-                    'you are logged in'
-                );
-        } else {
-            return redirect()
-                ->to(route('login'))
-                ->withErrors(
-                    [
-                        'auth' => 'credentials are wrong',
-                    ]
-                )
-                ->withInput([
-                    'name' => $request->name,
-                    'email' => $request->email,
-                ]);
-        }
-    }
-
-    public function login(
-        Request $request
-    ): RedirectResponse {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        if (
-            Auth::attempt([
-                'email' => $request->email,
-                'password' => $request->password,
-            ])
-        ) {
-            $request->session()->regenerate();
-            $request->session()->regenerateToken();
             if (
-                authUser()->is_admin
+                Auth::attempt([
+                    'email' => $request->email,
+                    'password' => $request->password,
+                ])
             ) {
+                $request->session()->regenerate();
+                $request->session()->regenerateToken();
+
+                $token = getGuestToken();
+                if ($token) {
+                    try {
+                        $this
+                            ->cartService
+                            ->transferCartIfNotExists(
+                                $token,
+                                authUser()->id
+                            );
+                    } catch (Throwable $e) {
+                        Log::error($e->getMessage());
+
+                        return redirect()
+                            ->to(
+                                route('dashboard')
+                            )
+                            ->with(
+                                'error',
+                                'Cart can not be transfered'
+                            );
+                    }
+                }
+
                 return redirect()
                     ->to(
-                        route(
-                            'filament.admin.auth.login'
-                        )
+                        route('dashboard')
                     )
                     ->with(
                         'success',
                         'you are logged in'
                     );
             } else {
-                $token = getGuestToken();
+                return redirect()
+                    ->to(route('login'))
+                    ->withErrors(
+                        [
+                            'auth' => 'credentials are wrong',
+                        ]
+                    )
+                    ->withInput([
+                        'name' => $request->name,
+                        'email' => $request->email,
+                    ]);
+            }
+        }
 
-                try {
-                    if ($token) {
-                        $this
-                            ->cartService
-                            ->transferGuestCartToUserCart(
-                                $token,
-                                authUser()->id
-                            );
-                    }
+        return redirect()
+            ->to(route('login'));
+    }
 
+    public function login(
+        Request $request
+    ): RedirectResponse {
+        $loginKey = getIdempotencyKey('login');
+        $isLogined = session('processed:'.$loginKey);
+        $sessionKey = session($loginKey);
+        $comingKey = request()->query($loginKey);
+
+        if (
+            $sessionKey === $comingKey &&
+                ! $isLogined
+        ) {
+            session([
+                'processed:'.$loginKey => true,
+            ]);
+
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
+
+            if (
+                Auth::attempt([
+                    'email' => $request->email,
+                    'password' => $request->password,
+                ])
+            ) {
+                $request->session()->regenerate();
+                $request->session()->regenerateToken();
+                if (
+                    authUser()->is_admin
+                ) {
                     return redirect()
-                        ->to(route('dashboard'))
+                        ->to(
+                            route(
+                                'filament.admin.auth.login'
+                            )
+                        )
                         ->with(
                             'success',
                             'you are logged in'
                         );
+                } else {
+                    $token = getGuestToken();
 
-                } catch (Throwable $e) {
-                    Log::error($e->getMessage());
+                    try {
+                        if ($token) {
+                            $this
+                                ->cartService
+                                ->transferGuestCartToUserCart(
+                                    $token,
+                                    authUser()->id
+                                );
+                        }
 
-                    return redirect()
-                        ->to(route('dashboard'))
-                        ->with(
-                            'error',
-                            'cart can not be transfered'
-                        );
+                        return redirect()
+                            ->to(route('dashboard'))
+                            ->with(
+                                'success',
+                                'you are logged in'
+                            );
+
+                    } catch (Throwable $e) {
+                        Log::error($e->getMessage());
+
+                        return redirect()
+                            ->to(route('dashboard'))
+                            ->with(
+                                'error',
+                                'cart can not be transfered'
+                            );
+                    }
                 }
+            } else {
+                return redirect()
+                    ->to(route('login'))
+                    ->withErrors(
+                        ['auth' => 'credentials are wrong']
+                    )
+                    ->withInput([
+                        'name' => $request->name,
+                        'email' => $request->email,
+                    ]);
             }
-        } else {
-            return redirect()
-                ->to(route('login'))
-                ->withErrors(
-                    ['auth' => 'credentials are wrong']
-                )
-                ->withInput([
-                    'name' => $request->name,
-                    'email' => $request->email,
-                ]);
         }
     }
 
     public function logout(
         Request $request
     ): RedirectResponse {
-        Auth::logout();
+        $logoutKey = getIdempotencyKey('logout');
+        $isLogout = session('processed:'.$logoutKey);
+        $sessionKey = session($logoutKey);
+        $comingKey = request()->query($logoutKey);
 
-        $request->session()->invalidate();
-        $request->session()->regenerate();
-        $request->session()->regenerateToken();
+        if (
+            $sessionKey === $comingKey &&
+                ! $isLogout
+        ) {
+            session([
+                'processed:'.$isLogout => true,
+            ]);
+
+            Auth::logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerate();
+            $request->session()->regenerateToken();
+
+            return redirect()->to(route('login'));
+        }
 
         return redirect()->to(route('login'));
     }

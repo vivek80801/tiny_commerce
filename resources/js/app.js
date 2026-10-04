@@ -1,4 +1,6 @@
 //
+const forms = [...document.querySelectorAll("form")];
+const links = [...document.querySelectorAll("a")];
 const countrySelect = document.getElementById("country_id");
 const stateSelect = document.getElementById("state_id");
 const districtSelect = document.getElementById("district_id");
@@ -56,4 +58,41 @@ stateSelect && stateSelect.addEventListener("change", function(e){
         })
         .catch(err => console.log(err))
 });
+
+if(forms.length > 0) {
+    forms.forEach(function(form) {
+        if(form) {
+            form.addEventListener("submit", function(){
+                const formSubmitBtn = form.querySelector("button[type='submit']");
+                const formSubmitInput = form.querySelector("input[type='submit']");
+
+                const loadingContent = " Loading....";
+
+                if(formSubmitBtn){
+                    formSubmitBtn.disabled = true;
+                    formSubmitBtn.innerHTML += loadingContent;
+                }else if(formSubmitInput) {
+                    formSubmitInput.disabled = true;
+                    formSubmitInput.innerHTML += loadingContent;
+                }
+            });
+        }
+    });
+}
+
+if(links.length > 0) {
+    links.forEach(function(link){
+        if(link) {
+            link.addEventListener("click", function(){
+                link.disabled = true;
+                const overlay = document.querySelector(".overlay");
+                console.log(overlay);
+                overlay.classList.remove("hidden");
+                overlay.classList.add("flex");
+                overlay.innerHTML = "<h1>Loading....<h1>";
+                console.log(overlay);
+            });
+        }
+    });
+}
 

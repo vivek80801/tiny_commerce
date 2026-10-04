@@ -14,6 +14,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 
 use function App\Helpers\authUser;
+use function App\Helpers\getIdempotencyKey;
 
 class CheckoutController extends Controller
 {
@@ -31,20 +32,34 @@ class CheckoutController extends Controller
     public function store(
         CheckoutRequest $request
     ): RedirectResponse {
-        try {
-            $this->checkoutService->createOrder(
-                $request->all(),
-                authUser()->id
-            );
-        } catch (\Throwable $e) {
-            Log::error($e->getMessage());
+        $checkoutKey = getIdempotencyKey('checkout');
+        $isCheckout = session('processed:'.$checkoutKey);
+        $sessionKey = session($checkoutKey);
+        $comingKey = request()->query($checkoutKey);
 
-            return redirect()
-                ->to(route('home'))
-                ->with(
-                    'error',
-                    'There is an issue when creating order'
+        if (
+            $sessionKey === $comingKey &&
+                ! $isCheckout
+        ) {
+            session([
+                'processed:'.$isCheckout => true,
+            ]);
+
+            try {
+                $this->checkoutService->createOrder(
+                    $request->all(),
+                    authUser()->id
                 );
+            } catch (\Throwable $e) {
+                Log::error($e->getMessage());
+
+                return redirect()
+                    ->to(route('home'))
+                    ->with(
+                        'error',
+                        'There is an issue when creating order'
+                    );
+            }
         }
 
         return redirect()
@@ -58,9 +73,23 @@ class CheckoutController extends Controller
     public function buynow(
         Product $product
     ): RedirectResponse {
-        $this->checkoutService->buynow(
-            authUser()->id, $product->id
-        );
+        $buynowKey = getIdempotencyKey('buynow');
+        $isBuynow = session('processed:'.$buynowKey);
+        $sessionKey = session($buynowKey);
+        $comingKey = request()->query($buynowKey);
+
+        if (
+            $sessionKey === $comingKey &&
+                 ! $isBuynow
+        ) {
+            session([
+                'processed:'.$isBuynow => true,
+            ]);
+
+            $this->checkoutService->buynow(
+                authUser()->id, $product->id
+            );
+        }
 
         return redirect()->to(route('checkout'));
     }

@@ -41,7 +41,8 @@
                            href="
                            {{
                                route('cart.inc', $cart->product->id)
-                           }}">
+                           }}?idempotency-key-cart-increment={{$incrementKey}}
+                           ">
                             <button
                                 class="
                                     p-3 bg-blue-600 text-white hover:bg-blue-800 cursor-pointer rounded
@@ -55,7 +56,9 @@
                                 +
                             </button>
                         </a>
-                        <a href="{{route('cart.dec', $cart->product->id)}}">
+                        <a href="{{
+                                route('cart.dec', $cart->product->id)
+                            }}?idempotency-key-cart-decrement={{$decrementKey}}">
                             <button class="p-3 bg-red-600 text-white hover:bg-red-800 cursor-pointer rounded">
                                 @if($cart->quantity <= 1)
                                     Delete

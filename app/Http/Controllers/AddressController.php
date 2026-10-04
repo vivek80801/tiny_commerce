@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 use function App\Helpers\authUser;
+use function App\Helpers\getIdempotencyKey;
 
 class AddressController extends Controller
 {
@@ -31,24 +32,39 @@ class AddressController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|min:5|max:20',
-            'phone_number' => 'required|digits:10',
-            'country' => 'required',
-            'state' => 'required',
-            'district' => 'required',
-            'pin_code' => 'required|digits:6',
-            'address' => 'required|min:10|max:100',
-            'house_number' => 'required',
-            'city' => 'required',
-        ]);
+        $addressKey = getIdempotencyKey('address');
+        $isAddress = session('processed:'.$addressKey);
+        $sessionKey = session($addressKey);
+        $comingKey = request()->query($addressKey);
 
-        $this
-            ->addressService
-            ->create(
-                $request->all(),
-                authUser()->id,
-            );
+        if (
+            $sessionKey === $comingKey &&
+                ! $isAddress
+        ) {
+            session([
+                'processed:'.$isAddress => true,
+            ]);
+
+            $request->validate([
+                'name' => 'required|min:5|max:20',
+                'phone_number' => 'required|digits:10',
+                'country' => 'required',
+                'state' => 'required',
+                'district' => 'required',
+                'pin_code' => 'required|digits:6',
+                'address' => 'required|min:10|max:100',
+                'house_number' => 'required',
+                'city' => 'required',
+            ]);
+
+            $this
+                ->addressService
+                ->create(
+                    $request->all(),
+                    authUser()->id,
+                );
+
+        }
 
         return redirect()->to(
             route('checkout')
