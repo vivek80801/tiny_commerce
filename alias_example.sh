@@ -17,6 +17,6 @@ alias gs="git status --short";
 alias gpa="git add -p";
 alias ga="git add";
 alias gc="git commit -m";
-alias gl="git log --pretty'%cr - %s'";
+alias gl="git log --pretty='%cr - %s'";
 alias gol="git log --oneline";
 alias gd="git diff";
