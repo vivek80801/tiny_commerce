@@ -30,13 +30,15 @@ git clone https://github.com/vivek80801/tiny_commerce.git && cd tiny_commerce
 cp .env.example .env
 
 ```
+
 ```sh
 composer install && npm install
-
 ```
+
 ```sh
 npm run build
 ```
+
 ```sh
 mkdir -p storage/app/public/uploads
 ```
@@ -46,13 +48,11 @@ php artisan storage:link
 ```
 
 ```sh
-
 php artisan migrate:fresh --seed
 ```
 
 ```sh
 composer dump-autoload
-
 ```
 
 ```sh
@@ -60,17 +60,53 @@ php artisan serve
 
 ```
 
+                        OR
+
+```sh
+
+git clone https://github.com/vivek80801/tiny_commerce.git && cd tiny_commerce
+
+# In Case if you  are forking the repo
+# git clone https://github.com/your_user_name/tiny_commerce.git && cd tiny_commerce
+
+cp .env.example .env
+composer install && npm install
+npm run build
+mkdir -p storage/app/public/uploads
+php artisan storage:link
+php artisan migrate:fresh --seed
+composer dump-autoload
+php artisan serve
+
+```
+
+## Alias for workflow.
+if you are not using tmux. you can define your own aliases as well
+
+```sh
+# These are not required to run the project
+
+cp alias_example.sh alias.sh
+source alias.sh
+```
+
 ## Background Services
 
 This application uses a scheduled job to clean up temporary guest carts every minute. Run these two commands in separate terminal sessions
 
 ```sh
-
 php artisan schedule:work
 ```
 ```sh
 php artisan queue:work
 ```
+                        OR
+
+```sh
+php artisan schedule:work
+php artisan queue:work
+```
+
 
 You can adjust the schedule frequency in `routes/console.php`:
 

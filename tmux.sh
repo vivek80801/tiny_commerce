@@ -18,6 +18,11 @@ CLIENT_WINDOW_NAME="C"
 EXTRA_WINDOW_NAME="Ex"
 DATABASE_WINDOW_NAME="D"
 
+# Alias File Name
+ALIAS_FILE_NAME="alias.sh"
+ALIAS_EXAMPLE_FILE_NAME="alias_example.sh"
+IS_ALIAS_READY=false
+
 log() {
     printf "\033[1;${1}m${2}\033[0m: ${3}\n"
 }
@@ -33,6 +38,23 @@ log_warning() {
 log_info() {
     log "34" "Info" "${1}"
 }
+
+if [[ -f ${ALIAS_FILE_NAME} ]]
+then
+    IS_ALIAS_READY=true
+else
+    if [[ -f ${ALIAS_EXAMPLE_FILE_NAME} ]]
+    then
+        cp ${ALIAS_EXAMPLE_FILE_NAME} ${ALIAS_FILE_NAME}
+        IS_ALIAS_READY=true
+    else
+        touch ${ALIAS_EXAMPLE_FILE_NAME}
+        cat "#!/usr/bin/env bash" >> ${ALIAS_EXAMPLE_FILE_NAME}
+        cat "alias art='php artisan'" >> ${ALIAS_EXAMPLE_FILE_NAME}
+        cp ${ALIAS_EXAMPLE_FILE_NAME} ${ALIAS_FILE_NAME}
+        IS_ALIAS_READY=true
+    fi
+fi
 
 if command -v tmux >/dev/null 2>&1; then
     log_info "Tmux is installed"
@@ -53,13 +75,13 @@ if command -v tmux >/dev/null 2>&1; then
                 test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$1";
             }
 
-            if version_gt ${CURRENT_PHP_VERSION} ${PHP_VERSION} ; then
-                tmux send-keys -t "${SESSION_NAME}" "php artisan serve" Enter
-            else
-                log_error "php version is not greater then or equal to ${PHP_VERSION}"
-            fi
+        if version_gt ${CURRENT_PHP_VERSION} ${PHP_VERSION} ; then
+            tmux send-keys -t "${SESSION_NAME}" "php artisan serve" Enter
         else
-            log_error "php is not installed"
+            log_error "php version is not greater then or equal to ${PHP_VERSION}"
+        fi
+    else
+        log_error "php is not installed"
         fi
 
         tmux new-window -n "${EDITOR_WINDOW_NAME}" -t "${SESSION_NAME}"
@@ -90,7 +112,12 @@ if command -v tmux >/dev/null 2>&1; then
         tmux send-keys -t "${SESSION_NAME}" "cd database" Enter
 
         tmux new-window -n "${EXTRA_WINDOW_NAME}" -t "${SESSION_NAME}"
-        tmux send-keys -t "${SESSION_NAME}" "echo 'Hello from tmux'" Enter
+
+        if ${IS_ALIAS_READY}
+        then
+            tmux send-keys -t "${SESSION_NAME}" "echo 'Hello from tmux'" Enter
+            tmux send-keys -t "${SESSION_NAME}" "source alias.sh" Enter
+        fi
 
         if command -v ${EDITOR} >/dev/null 2>&1; then
             tmux select-window -t "${SESSION_NAME}:E"
