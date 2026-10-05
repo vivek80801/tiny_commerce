@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\Order;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 
@@ -82,5 +83,44 @@ if (! function_exists('setIdempontencyKey')) {
         );
 
         return $uuid;
+    }
+}
+
+if(!function_exists("pathForInvoice"))
+{
+    function pathForInvoice(
+        string $fileName
+    ): string
+    {
+        return storage_path(
+            "app/public/invoices/"
+            .$fileName
+        );
+    }
+}
+
+if (!function_exists("orderInvoicePath"))
+{
+    function orderInvoicePath(
+        Order $order
+    )
+    {
+        return "Invoice-"
+            .$order->order_id
+            .".pdf";
+    }
+}
+
+if(!function_exists("orderInvoiceUrl"))
+{
+    function orderInvoiceUrl(
+        Order $order
+    )
+    {
+        return url(
+            "/storage/invoices/Invoice-"
+            .$order->order_id
+            .".pdf"
+        );
     }
 }

@@ -16,6 +16,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order Detail</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Receipt</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -27,6 +28,27 @@
                         <a class="underline text-blue-500" href="{{route('orderdetail', $order->id)}}">View Detail</a>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">&#x20B9;{{$order->total / 100}}</td>
+                    @if(
+                        file_exists(
+                            \App\Helpers\pathForInvoice(
+                                \App\Helpers\orderInvoicePath(
+                                    $order
+                                )
+                            )
+                        )
+                    )
+                        <td>
+                            <a
+                                class="underline text-blue-500"
+                                href="{{
+                                    \App\Helpers\orderInvoiceUrl(
+                                        $order
+                                    )
+                                }}">Receipt</a>
+                        </td>
+                    @else
+                        <td>Receipt Not Found</td>
+                    @endif
                 </tr>
             @endforeach
                 </tbody>

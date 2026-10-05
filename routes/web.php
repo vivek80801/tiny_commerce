@@ -73,3 +73,7 @@ Route::group([
     Route::get('/decrement/{product}', 'decrement')
         ->name('cart.dec');
 });
+
+Route::fallback(function(){
+    return view("errors.not_found");
+});

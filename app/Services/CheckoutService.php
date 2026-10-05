@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Address;
+use App\Jobs\GenerateOrderInvoce;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -18,7 +18,6 @@ use function App\Helpers\orderIdLength;
 class CheckoutService
 {
     public function __construct(
-        private Address $address,
         private AddressService $addressService,
         private Cart $cart,
         private Order $order,
@@ -73,6 +72,21 @@ class CheckoutService
 
                 $cart->delete();
             }
+
+            $orderItems = $this
+                ->orderItem::where(
+                    "order_id",
+                    $order->id
+                )
+                ->with('product')
+                ->get();
+
+            GenerateOrderInvoce::dispatch(
+                $orderItems,
+                $order,
+                $userId,
+            )->afterCommit();
+
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
@@ -103,49 +117,21 @@ class CheckoutService
         }
     }
 
-    /**
-     * @param  array<string, mixed>  $newAddress
-     */
-    private function createAddress(
-        array $newAddress,
-        int $userId,
-    ): Address {
-        $address = $this->address::where(
-            'user_id', $userId
-        )->first();
-
-        if ($address) {
-            $address = $this->address::find(
-                (int) $newAddress['address']
-            );
-        } else {
-            $address = $this->address::create([
-                'name' => $newAddress['name'],
-                'user_id' => $userId,
-                'country_id' => $newAddress['country'],
-                'state_id' => $newAddress['state'],
-                'district_id' => $newAddress['district'],
-                'phone' => $newAddress['phone_number'],
-                'house_number' => $newAddress['house_number'],
-                'city' => $newAddress['city'],
-                'address' => $newAddress['address'],
-                'pin_code' => $newAddress['pin_code'],
-            ]);
-        }
-
-        return $address;
-    }
-
     private function getCarts(int $userId): Collection
     {
         $carts = $this->cart::join(
-            'products', 'carts.product_id', '=', 'products.id'
+            'products',
+            'carts.product_id',
+            '=',
+            'products.id',
         )
             ->where('user_id', $userId)
             ->select(
                 'carts.*',
                 'products.price',
-                DB::raw('carts.quantity * products.price as line_total')
+                DB::raw(
+                    'carts.quantity * products.price as line_total'
+                )
             )
             ->get();
 
