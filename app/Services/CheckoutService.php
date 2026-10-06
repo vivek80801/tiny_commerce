@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Jobs\GenerateOrderInvoce;
+use App\Jobs\GenerateInoviceAndSendEmail;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -81,7 +81,7 @@ class CheckoutService
                 ->with('product')
                 ->get();
 
-            GenerateOrderInvoce::dispatch(
+            GenerateInoviceAndSendEmail::dispatch(
                 $orderItems,
                 $order,
                 $userId,

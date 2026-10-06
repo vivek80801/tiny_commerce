@@ -99,6 +99,18 @@ if(!function_exists("pathForInvoice"))
     }
 }
 
+if(!function_exists("orderInvoicePathTemp"))
+{
+    function orderInvoicePathTemp(
+        Order $order
+    )
+    {
+        return "Invoice-"
+            .$order->order_id
+            .".temp.pdf";
+    }
+}
+
 if (!function_exists("orderInvoicePath"))
 {
     function orderInvoicePath(

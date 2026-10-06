@@ -10,9 +10,11 @@ use Illuminate\Foundation\Queue\Queueable;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Bus\Batchable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
 use function App\Helpers\orderInvoicePath;
+use function App\Helpers\orderInvoicePathTemp;
 use function App\Helpers\pathForInvoice;
 
 class GenerateOrderInvoce implements ShouldQueue
@@ -61,6 +63,18 @@ class GenerateOrderInvoce implements ShouldQueue
             )
                 ->render();
 
+            $tempFilePathForInvoice = pathForInvoice(
+                orderInvoicePathTemp(
+                    $order
+                )
+            );
+
+            $filePathForInvoice = pathForInvoice(
+                orderInvoicePath(
+                    $order
+                )
+            );
+
             Pdf::loadHTML($html)
                 ->setPaper(
                     "a4",
@@ -68,22 +82,23 @@ class GenerateOrderInvoce implements ShouldQueue
                 )
                 ->setWarnings(false)
                 ->save(
-                    pathForInvoice(
-                        orderInvoicePath(
-                            $order
-                        )
-                    )
+                    $tempFilePathForInvoice
                 );
+
+            File::copy(
+                $tempFilePathForInvoice,
+                $filePathForInvoice
+            );
+
+            File::delete(
+                $tempFilePathForInvoice
+            );
 
             Log::info(
                 "Invoice is generated for order id: "
                     . $order->order_id
                     .". check here "
-                    . pathForInvoice(
-                        orderInvoicePath(
-                            $order
-                        )
-                    )
+                    . $filePathForInvoice
             );
         } else {
             Log::info(

@@ -7,8 +7,7 @@ use App\Models\OrderItem;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Bus;
-
-use function App\Helpers\authUser;
+use Illuminate\Support\Facades\Log;
 
 class GenerateBulkOrderInvoice implements ShouldQueue
 {
@@ -30,7 +29,7 @@ class GenerateBulkOrderInvoice implements ShouldQueue
         $batch = Bus::batch([])
             ->dispatch();
 
-        Order::limit(100)->chunkById(10, function($orders) use ($batch){
+        Order::chunkById(10, function($orders) use ($batch){
             $jobs = $orders->map(function(Order $order){
                 $orderItems = OrderItem::where(
                     "order_id",
@@ -49,5 +48,10 @@ class GenerateBulkOrderInvoice implements ShouldQueue
 
             $batch->add($jobs);
         });
+    }
+
+    public function failed(\Throwable $e)
+    {
+        Log::error($e->getMessage());
     }
 }
