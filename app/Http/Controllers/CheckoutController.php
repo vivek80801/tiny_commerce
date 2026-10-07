@@ -63,7 +63,7 @@ class CheckoutController extends Controller
         }
 
         return redirect()
-            ->to(route('home'))
+            ->to(route('dashboard'))
             ->with(
                 'success',
                 'you are successfully created Order'
@@ -105,5 +105,12 @@ class CheckoutController extends Controller
             'user.order_detail',
             compact('orderDetails')
         );
+    }
+
+    public function generateInvoice(
+        Order $order
+    )
+    {
+
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Auditable;
 use Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
@@ -35,7 +36,7 @@ use Illuminate\Support\Carbon;
 class Category extends Model
 {
     /** @use HasFactory<CategoryFactory> */
-    use HasFactory;
+    use HasFactory, Auditable;
 
     public function products(): HasMany
     {

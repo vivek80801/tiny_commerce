@@ -1,6 +1,6 @@
 # Tiny Commerce
 
-A lightweight e-commerce application built with PHP, Laravel, and Filament. 
+A lightweight e-commerce application built with php 8.3, laravel 13 and filament 5. 
 
 ## Features
 * Product catalog with search and price filtering
@@ -78,10 +78,26 @@ php artisan migrate:fresh --seed
 composer dump-autoload
 php artisan serve
 
+
+```
+                    OR
+```sh
+
+git clone https://github.com/vivek80801/tiny_commerce.git && \\
+cd tiny_commerce && \\
+cp .env.example .env && \\
+composer install && npm install && \\
+npm run build && \\
+mkdir -p storage/app/public/uploads && \\
+php artisan storage:link && \\
+php artisan migrate:fresh --seed && \\
+composer dump-autoload && \\
+php artisan serve
+
 ```
 
-## Alias for workflow.
-if you are not using tmux. you can define your own aliases as well
+## Workflow
+if you are not using tmux. You can define your own aliases as well
 
 ```sh
 # These are not required to run the project
@@ -89,6 +105,18 @@ if you are not using tmux. you can define your own aliases as well
 cp alias_example.sh alias.sh
 source alias.sh
 ```
+
+If you have tmux installed
+
+```sh
+source tmux.sh
+
+# for shell where alias is not available. You know. If you need just in case.
+# or better modify tmux.sh with your liking. 
+source alias.sh
+```
+
+Check alias.sh for aliases. You can add or remove it based on your liking.
 
 ## Background Services
 

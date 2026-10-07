@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Auditable;
 use Database\Factories\ImageFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -35,7 +36,7 @@ use Illuminate\Support\Carbon;
 class Image extends Model
 {
     /** @use HasFactory<ImageFactory> */
-    use HasFactory;
+    use HasFactory, Auditable;
 
     public function imageable(): MorphTo
     {

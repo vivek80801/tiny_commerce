@@ -59,6 +59,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/', 'store')
             ->name('address.store');
     });
+
+    Route::get("/generate_invoice/{order}", [
+        CheckoutController::class,
+        "generateInvoice"
+    ])->name("generate_invoice");
+
 });
 
 Route::group([

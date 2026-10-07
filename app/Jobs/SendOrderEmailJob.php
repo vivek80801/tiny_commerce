@@ -27,6 +27,8 @@ class SendOrderEmailJob implements ShouldQueue
      */
     public function handle(): void
     {
+        // I know this is not Idempotent.
+        // I have no intention to add it.
         Mail::to(
             $this->user
         )

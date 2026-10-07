@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Auditable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,6 +30,8 @@ use Illuminate\Support\Carbon;
 #[Fillable(['name', 'state_id'])]
 class District extends Model
 {
+    use Auditable;
+
     public function state(): BelongsTo
     {
         return $this->belongsTo(State::class);

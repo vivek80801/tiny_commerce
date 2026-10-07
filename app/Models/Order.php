@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Auditable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -43,6 +44,8 @@ use Illuminate\Support\Carbon;
 ])]
 class Order extends Model
 {
+    use Auditable;
+
     public function orderItem(): HasMany
     {
         return $this->hasMany(OrderItem::class);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Auditable;
 use Database\Factories\CountryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
@@ -33,7 +34,7 @@ use Illuminate\Support\Carbon;
 class Country extends Model
 {
     /** @use HasFactory<CountryFactory> */
-    use HasFactory;
+    use HasFactory, Auditable;
 
     public function state(): HasMany
     {
