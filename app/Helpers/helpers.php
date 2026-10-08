@@ -86,53 +86,45 @@ if (! function_exists('setIdempontencyKey')) {
     }
 }
 
-if(!function_exists("pathForInvoice"))
-{
+if (! function_exists('pathForInvoice')) {
     function pathForInvoice(
         string $fileName
-    ): string
-    {
+    ): string {
         return storage_path(
-            "app/public/invoices/"
+            'app/public/invoices/'
             .$fileName
         );
     }
 }
 
-if(!function_exists("orderInvoicePathTemp"))
-{
+if (! function_exists('orderInvoicePathTemp')) {
     function orderInvoicePathTemp(
         Order $order
-    )
-    {
-        return "Invoice-"
+    ) {
+        return 'Invoice-'
             .$order->order_id
-            .".temp.pdf";
+            .'.temp.pdf';
     }
 }
 
-if (!function_exists("orderInvoicePath"))
-{
+if (! function_exists('orderInvoicePath')) {
     function orderInvoicePath(
         Order $order
-    )
-    {
-        return "Invoice-"
+    ) {
+        return 'Invoice-'
             .$order->order_id
-            .".pdf";
+            .'.pdf';
     }
 }
 
-if(!function_exists("orderInvoiceUrl"))
-{
+if (! function_exists('orderInvoiceUrl')) {
     function orderInvoiceUrl(
         Order $order
-    )
-    {
+    ) {
         return url(
-            "/storage/invoices/Invoice-"
+            '/storage/invoices/Invoice-'
             .$order->order_id
-            .".pdf"
+            .'.pdf'
         );
     }
 }

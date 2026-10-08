@@ -60,10 +60,10 @@ Route::group(['middleware' => ['auth']], function () {
             ->name('address.store');
     });
 
-    Route::get("/generate_invoice/{order}", [
+    Route::get('/generate_invoice/{order}', [
         CheckoutController::class,
-        "generateInvoice"
-    ])->name("generate_invoice");
+        'generateInvoice',
+    ])->name('generate_invoice');
 
 });
 
@@ -80,6 +80,6 @@ Route::group([
         ->name('cart.dec');
 });
 
-Route::fallback(function(){
-    return view("errors.not_found");
+Route::fallback(function () {
+    return view('errors.not_found');
 });

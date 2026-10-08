@@ -39,7 +39,7 @@ use Illuminate\Support\Carbon;
 class Cart extends Model
 {
     /** @use HasFactory<CartFactory> */
-    use HasFactory, Auditable;
+    use Auditable, HasFactory;
 
     public function user(): BelongsTo
     {

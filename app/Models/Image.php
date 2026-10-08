@@ -36,7 +36,7 @@ use Illuminate\Support\Carbon;
 class Image extends Model
 {
     /** @use HasFactory<ImageFactory> */
-    use HasFactory, Auditable;
+    use Auditable, HasFactory;
 
     public function imageable(): MorphTo
     {

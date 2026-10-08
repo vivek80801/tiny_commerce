@@ -48,7 +48,7 @@ use Illuminate\Support\Carbon;
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
-    use HasFactory, Auditable;
+    use Auditable, HasFactory;
 
     public function getPrice(): float
     {

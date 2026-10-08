@@ -28,7 +28,7 @@ class AuthController extends Controller
     public function registerView(): View
     {
         $registerKey = setIdempontencyKey(
-            'register'
+            'user-register'
         );
 
         return view(
@@ -47,10 +47,10 @@ class AuthController extends Controller
     public function register(
         Request $request
     ): RedirectResponse {
-        $registerKey = getIdempotencyKey('register');
+        $registerKey = getIdempotencyKey('user-register');
         $isRegistered = session('processed:'.$registerKey);
         $sessionKey = session($registerKey);
-        $comingKey = request()->query($registerKey);
+        $comingKey = $request->$registerKey;
 
         if (
             $sessionKey === $comingKey &&
@@ -130,7 +130,16 @@ class AuthController extends Controller
         }
 
         return redirect()
-            ->to(route('login'));
+            ->back()
+            ->withErrors(
+                [
+                    'auth' => 'Idempotancy key is not correct',
+                ]
+            )
+            ->withInput([
+                'name' => $request->name,
+                'email' => $request->email,
+            ]);
     }
 
     public function login(
@@ -139,7 +148,7 @@ class AuthController extends Controller
         $loginKey = getIdempotencyKey('login');
         $isLogined = session('processed:'.$loginKey);
         $sessionKey = session($loginKey);
-        $comingKey = request()->query($loginKey);
+        $comingKey = $request->$loginKey;
 
         if (
             $sessionKey === $comingKey &&
@@ -218,6 +227,16 @@ class AuthController extends Controller
                     ]);
             }
         }
+
+        return redirect()
+            ->to(route('login'))
+            ->withErrors(
+                ['auth' => 'credentials are wrong']
+            )
+            ->withInput([
+                'name' => $request->name,
+                'email' => $request->email,
+            ]);
     }
 
     public function logout(
@@ -226,7 +245,7 @@ class AuthController extends Controller
         $logoutKey = getIdempotencyKey('logout');
         $isLogout = session('processed:'.$logoutKey);
         $sessionKey = session($logoutKey);
-        $comingKey = request()->query($logoutKey);
+        $comingKey = $request->$logoutKey;
 
         if (
             $sessionKey === $comingKey &&

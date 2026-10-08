@@ -75,7 +75,7 @@ class CheckoutService
 
             $orderItems = $this
                 ->orderItem::where(
-                    "order_id",
+                    'order_id',
                     $order->id
                 )
                 ->with('product')

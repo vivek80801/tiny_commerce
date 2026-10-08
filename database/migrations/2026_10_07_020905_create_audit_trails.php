@@ -14,13 +14,12 @@ return new class extends Migration
     {
         Schema::create('audit_trails', function (Blueprint $table) {
             $table->id();
-            $table->string("request_id", 255)
-                ->nullable()
-            ;
-            $table->string("event");
-            $table->ipAddress("ip_address");
-            $table->nullableMorphs("auditable");
-            $table->json("data");
+            $table->string('request_id', 255)
+                ->nullable();
+            $table->string('event');
+            $table->ipAddress('ip_address');
+            $table->nullableMorphs('auditable');
+            $table->json('data');
             $table->foreignIdFor(User::class)
                 ->nullable();
             $table->timestamps();

@@ -11,21 +11,23 @@ trait Auditable
 {
     protected static function bootAuditable(): void
     {
-        static::created(function(Model $model){
+        static::created(function (Model $model) {
             self::changeLog($model, 'created', null, $model->getAttributes());
         });
 
-        static::updated(function (Model $model){
+        static::updated(function (Model $model) {
             $changes = $model->getChanges();
 
-            if(empty($changes)) return;
+            if (empty($changes)) {
+                return;
+            }
 
             $old = array_intersect_key($model->getOriginal(), $changes);
-            self::changeLog($model, "updated", $old, $changes);
+            self::changeLog($model, 'updated', $old, $changes);
         });
 
-        static::deleted(function(Model $model){
-            self::changeLog($model, "deleted", $model->getOriginal(), null);
+        static::deleted(function (Model $model) {
+            self::changeLog($model, 'deleted', $model->getOriginal(), null);
         });
     }
 
@@ -34,26 +36,23 @@ trait Auditable
         string $event,
         mixed $old,
         mixed $new,
-    ): void
-    {
+    ): void {
         $hidden = $model->getHidden();
         $hidden = [
             ...$hidden,
-            "created_at",
-            "updated_at",
-            "id",
+            'created_at',
+            'updated_at',
+            'id',
         ];
 
-        if($old)
-        {
+        if ($old) {
             $old = array_diff_key(
                 $old,
                 array_flip($hidden)
             );
         }
 
-        if($new)
-        {
+        if ($new) {
             $new = array_diff_key(
                 $new,
                 array_flip($hidden)
@@ -61,18 +60,18 @@ trait Auditable
         }
 
         $newData = [
-            "old" => $old,
-            "new" => $new,
+            'old' => $old,
+            'new' => $new,
         ];
 
         AuditTrail::create([
-            "request_id" => request()->request_id,
-            "event" => $event,
-            "ip_address" => Request::ip(),
-            "auditable_id" => $model->getKey(),
-            "auditable_type" => $model::class,
-            "data" => json_encode($newData),
-            "user_id" => Auth::id() ?? null,
+            'request_id' => request()->request_id,
+            'event' => $event,
+            'ip_address' => Request::ip(),
+            'auditable_id' => $model->getKey(),
+            'auditable_type' => $model::class,
+            'data' => json_encode($newData),
+            'user_id' => Auth::id() ?? null,
         ]);
 
     }

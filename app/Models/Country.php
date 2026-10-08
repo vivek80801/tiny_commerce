@@ -34,7 +34,7 @@ use Illuminate\Support\Carbon;
 class Country extends Model
 {
     /** @use HasFactory<CountryFactory> */
-    use HasFactory, Auditable;
+    use Auditable, HasFactory;
 
     public function state(): HasMany
     {

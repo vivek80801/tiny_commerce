@@ -18,8 +18,7 @@ class GenerateBulkOrderInvoice implements ShouldQueue
      */
     public function __construct(
 
-    )
-    {}
+    ) {}
 
     /**
      * Execute the job.
@@ -29,10 +28,10 @@ class GenerateBulkOrderInvoice implements ShouldQueue
         $batch = Bus::batch([])
             ->dispatch();
 
-        Order::chunkById(10, function($orders) use ($batch){
-            $jobs = $orders->map(function(Order $order){
+        Order::chunkById(10, function ($orders) use ($batch) {
+            $jobs = $orders->map(function (Order $order) {
                 $orderItems = OrderItem::where(
-                    "order_id",
+                    'order_id',
                     $order->id
                 )
                     ->get();
@@ -42,7 +41,7 @@ class GenerateBulkOrderInvoice implements ShouldQueue
                         $orderItems,
                         $order,
                         $order->user_id,
-                    )
+                    ),
                 ];
             });
 

@@ -36,7 +36,7 @@ use Illuminate\Support\Carbon;
 class Category extends Model
 {
     /** @use HasFactory<CategoryFactory> */
-    use HasFactory, Auditable;
+    use Auditable, HasFactory;
 
     public function products(): HasMany
     {

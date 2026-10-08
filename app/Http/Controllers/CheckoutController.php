@@ -109,8 +109,5 @@ class CheckoutController extends Controller
 
     public function generateInvoice(
         Order $order
-    )
-    {
-
-    }
+    ) {}
 }

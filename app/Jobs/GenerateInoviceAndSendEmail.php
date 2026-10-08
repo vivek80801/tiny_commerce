@@ -17,16 +17,14 @@ class GenerateInoviceAndSendEmail implements ShouldQueue
 
     /**
      * Create a new job instance.
-     * @param Collection<OrderItem> $orderItems
-     * @param Order $order
-     * @param int $userId
+     *
+     * @param  Collection<OrderItem>  $orderItems
      */
     public function __construct(
         private Collection $orderItems,
         private Order $order,
         private int $userId,
-    )
-    {}
+    ) {}
 
     /**
      * Execute the job.

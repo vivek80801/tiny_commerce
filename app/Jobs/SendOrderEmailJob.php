@@ -19,8 +19,7 @@ class SendOrderEmailJob implements ShouldQueue
     public function __construct(
         private Order $order,
         private User $user,
-    )
-    {}
+    ) {}
 
     /**
      * Execute the job.
@@ -37,6 +36,6 @@ class SendOrderEmailJob implements ShouldQueue
                     $this->order
                 ),
             );
-        ;
+
     }
 }
