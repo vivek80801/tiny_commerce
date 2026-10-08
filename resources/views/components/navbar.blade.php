@@ -1,3 +1,7 @@
+@php
+    $logoutKey = session(\App\Helpers\getIdempotencyKey('logout'));
+@endphp
+
 <nav class="desktop-nav">
     <h2>Logo</h2>
     <ul class="flex justify-center items-center">
@@ -15,7 +19,7 @@
                     @csrf
                     <input
                         type="hidden"
-                        name="idempontency-key-logout"
+                        name="idempotency-key-logout"
                         value="{{ $logoutKey }}"
                     />
                     <button type="submit">Logout</button>
@@ -46,7 +50,7 @@
                     @csrf
                     <input
                         type="hidden"
-                        name="idempontency-key-logout"
+                        name="idempotency-key-logout"
                         value="{{ $logoutKey }}"
                     />
                     <button type="submit">Logout</button>

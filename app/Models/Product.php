@@ -23,11 +23,10 @@ use Illuminate\Support\Carbon;
  * @property int $category_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection<int, Cart> $cart
+ * @property-read Collection<int, \App\Models\Cart> $cart
  * @property-read int|null $cart_count
- * @property-read Category $category
- * @property-read Image|null $image
- *
+ * @property-read \App\Models\Category $category
+ * @property-read \App\Models\Image|null $image
  * @method static \Database\Factories\ProductFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product newQuery()
@@ -41,7 +40,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 #[Fillable(['name', 'price', 'description', 'quantity', 'category_id'])]

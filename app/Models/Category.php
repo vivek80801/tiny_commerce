@@ -17,10 +17,9 @@ use Illuminate\Support\Carbon;
  * @property string $name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Image|null $image
- * @property-read Collection<int, Product> $products
+ * @property-read \App\Models\Image|null $image
+ * @property-read Collection<int, \App\Models\Product> $products
  * @property-read int|null $products_count
- *
  * @method static \Database\Factories\CategoryFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category newQuery()
@@ -29,7 +28,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 #[Fillable(['name'])]

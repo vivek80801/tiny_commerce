@@ -14,8 +14,7 @@ use Illuminate\Support\Carbon;
  * @property string $name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read State $state
- *
+ * @property-read \App\Models\State $state
  * @method static \Illuminate\Database\Eloquent\Builder<static>|District newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|District newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|District query()
@@ -24,7 +23,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|District whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|District whereStateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|District whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 #[Fillable(['name', 'state_id'])]

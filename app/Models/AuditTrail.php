@@ -19,8 +19,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Model|\Eloquent|null $auditable
- * @property-read User|null $user
- *
+ * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AuditTrail newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AuditTrail newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AuditTrail query()
@@ -34,7 +33,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AuditTrail whereRequestId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AuditTrail whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AuditTrail whereUserId($value)
- *
  * @mixin \Eloquent
  */
 class AuditTrail extends Model

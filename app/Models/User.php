@@ -30,11 +30,10 @@ use Override;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property int $is_admin
- * @property-read Collection<int, Cart> $cart
+ * @property-read Collection<int, \App\Models\Cart> $cart
  * @property-read int|null $cart_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
@@ -48,7 +47,6 @@ use Override;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 #[Fillable(['name', 'email', 'password'])]

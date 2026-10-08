@@ -279,7 +279,7 @@ class AuthController extends Controller
 
     public function dashboard(): View
     {
-        $logoutKey = setIdempontencyKey('logout');
+        setIdempontencyKey('logout');
         $addresses = Address::select(
             'name',
             'phone',
@@ -315,7 +315,6 @@ class AuthController extends Controller
             ->paginate(5);
 
         return view('auth.dashboard', compact(
-            'logoutKey',
             'addresses',
             'orders',
         ));

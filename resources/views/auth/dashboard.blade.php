@@ -67,14 +67,14 @@
             {{$orders->links()}}
         </div>
 
-        <div class="flex mt-3 w-250 h-5 bg-gray-200 rounded-full overflow-hidden dark:bg-gray-700">
+        {{--<div class="flex mt-3 w-250 h-5 bg-gray-200 rounded-full overflow-hidden dark:bg-gray-700">
             <div
                 class="flex flex-col justify-center rounded-full overflow-hidden bg-indigo-600 text-xs text-white text-center whitespace-nowrap dark:bg-indigo-500 transition duration-500"
                 style="width: 25%"
                 >
                 25%
             </div>
-        </div>
+        </div> --}}
 
         <div class="m-3 flex justify-around items-center flex-col">
             <h1 class="m-3">Addresses</h1>

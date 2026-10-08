@@ -18,11 +18,10 @@ use Illuminate\Support\Carbon;
  * @property int $total
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Address|null $address
- * @property-read Collection<int, OrderItem> $orderItem
+ * @property-read \App\Models\Address|null $address
+ * @property-read Collection<int, \App\Models\OrderItem> $orderItem
  * @property-read int|null $order_item_count
- * @property-read User $user
- *
+ * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order query()
@@ -33,7 +32,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereTotal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Order whereUserId($value)
- *
  * @mixin \Eloquent
  */
 #[Fillable([

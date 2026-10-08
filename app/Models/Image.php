@@ -18,7 +18,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Model|\Eloquent|null $imageable
- *
  * @method static \Database\Factories\ImageFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Image newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Image newQuery()
@@ -29,7 +28,6 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Image whereImageableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Image whereImageableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Image whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 #[Fillable(['filename'])]

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\CreateAddressReq;
 use App\Http\Requests\CheckoutRequest;
+use App\Jobs\GenerateInoviceAndSendEmail;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -109,5 +110,20 @@ class CheckoutController extends Controller
 
     public function generateInvoice(
         Order $order
-    ) {}
+    ): RedirectResponse
+    {
+        $orderItems = OrderItem::where(
+            "order_id",
+            $order->id
+        )
+            ->get();
+
+        GenerateInoviceAndSendEmail::dispatch(
+            $orderItems,
+            $order,
+            authUser()->id,
+        );
+
+        return redirect()->back();
+    }
 }
