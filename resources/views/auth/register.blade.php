@@ -22,7 +22,7 @@
             <input
                 type="hidden"
                 name="idempotency-key-user-register"
-                value="{{$registerKey}}"
+                value="{{ $registerKey }}"
                 required />
             <div class="form-group">
                 <label for="email">Email:</label>

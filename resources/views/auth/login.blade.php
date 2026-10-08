@@ -12,6 +12,11 @@
             @error("auth")
                 <span class="err-msg">{{$message}}</span>
             @enderror
+            <input
+                type="hidden"
+                name="idempotency-key-login"
+                value="{{ $loginKey }}"
+            />
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" name="email" placeholder="johan@gmail.com " required />

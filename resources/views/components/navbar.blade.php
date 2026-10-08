@@ -13,6 +13,11 @@
             <li>
                 <form action="{{route('logout')}}" method="post">
                     @csrf
+                    <input
+                        type="hidden"
+                        name="idempontency-key-logout"
+                        value="{{ $logoutKey }}"
+                    />
                     <button type="submit">Logout</button>
                 </form>
             </li>
@@ -39,6 +44,11 @@
             <li>
                 <form action="{{route('logout')}}" method="post">
                     @csrf
+                    <input
+                        type="hidden"
+                        name="idempontency-key-logout"
+                        value="{{ $logoutKey }}"
+                    />
                     <button type="submit">Logout</button>
                 </form>
             </li>

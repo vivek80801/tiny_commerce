@@ -90,8 +90,8 @@ class CheckoutService
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
-            dd($e->getMessage());
-            Log::error($e->getMessage);
+
+            Log::error($e->getMessage());
         }
     }
 
@@ -161,8 +161,9 @@ class CheckoutService
         $this->orderItem::create([
             'order_id' => $order->id,
             'product_id' => $cart->product->id,
-            'price' => $cart->price,
+            'price' => $cart->product->price,
             'quantity' => $cart->quantity,
+            /** @phpstan-ignore property.notFound  */
             'amount' => $cart->line_total,
         ]);
     }

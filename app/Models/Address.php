@@ -25,6 +25,7 @@ use Illuminate\Support\Carbon;
  * @property int $district_id
  * @property-read Country $country
  * @property-read District $district
+ * @property-read Order|null $orders
  * @property-read State $state
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Address newModelQuery()

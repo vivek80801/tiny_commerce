@@ -47,7 +47,7 @@ class OrderForm
                                     $set('price', $product?->getPrice());
 
                                     $set('amount', $product
-                                        ? (float) $product?->getPrice() * (float) ($get('quantity') ?: (float) 0)
+                                        ? (float) $product->getPrice() * (float) ($get('quantity') ?: (float) 0)
                                         : (float) 0
                                     );
                                 }
@@ -75,7 +75,7 @@ class OrderForm
                                     $set('price', $product?->getPrice());
 
                                     $set('amount', $product
-                                        ? ((int) $product?->price * (int) ($get('quantity') ?: 0)) / 100
+                                        ? ((int) $product->price * (int) ($get('quantity') ?: 0)) / 100
                                         : 0
                                     );
                                 }
