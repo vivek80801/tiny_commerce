@@ -110,19 +110,33 @@ class CheckoutController extends Controller
 
     public function generateInvoice(
         Order $order
-    ): RedirectResponse
-    {
-        $orderItems = OrderItem::where(
-            "order_id",
-            $order->id
-        )
-            ->get();
+    ): RedirectResponse {
+        $generateInvoiceKey = getIdempotencyKey('geneate-invoice');
+        $isInvoiceGenerated = session('processed:'.$generateInvoiceKey);
+        $sessionKey = session($generateInvoiceKey);
+        $comingKey = request()->query($generateInvoiceKey);
 
-        GenerateInoviceAndSendEmail::dispatch(
-            $orderItems,
-            $order,
-            authUser()->id,
-        );
+        if (
+            $sessionKey === $comingKey &&
+                ! $isInvoiceGenerated
+
+        ) {
+            session([
+                'processed:'.$isInvoiceGenerated => true,
+            ]);
+
+            $orderItems = OrderItem::where(
+                'order_id',
+                $order->id
+            )
+                ->get();
+
+            GenerateInoviceAndSendEmail::dispatch(
+                $orderItems,
+                $order,
+                authUser()->id,
+            );
+        }
 
         return redirect()->back();
     }

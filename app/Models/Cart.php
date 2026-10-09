@@ -18,8 +18,9 @@ use Illuminate\Support\Carbon;
  * @property string|null $guest_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read \App\Models\Product $product
- * @property-read \App\Models\User|null $user
+ * @property-read Product $product
+ * @property-read User|null $user
+ *
  * @method static \Database\Factories\CartFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Cart newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Cart newQuery()
@@ -31,6 +32,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Cart whereQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Cart whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Cart whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 #[Fillable(['quantity', 'product_id', 'user_id', 'guest_token'])]

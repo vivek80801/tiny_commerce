@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 
 use function App\Helpers\setIdempontencyKey;
 
@@ -13,6 +14,9 @@ class HomeController extends Controller
     {
         $query = Product::query();
         $cartKey = setIdempontencyKey('cart');
+        $buyNowKey = Auth::check()
+            ? setIdempontencyKey('buynow')
+            : 'buynow';
 
         if (request()->query('category')) {
             $query = Product::where(
@@ -76,6 +80,7 @@ class HomeController extends Controller
             compact(
                 'products',
                 'cartKey',
+                'buyNowKey',
             )
         );
     }

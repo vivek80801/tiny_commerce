@@ -14,6 +14,7 @@ alias gi="grep -rn ''";
 alias comp="composer";
 alias compr="composer require";
 alias pt="${PHP} ./vendor/bin/phpstan analyse"
+alias ft="${PHP} ./vendor/bin/pint"
 alias gs="git status --short";
 alias gpa="git add -p";
 alias ga="git add";

@@ -56,7 +56,7 @@
                     @if($product->quantity > 0)
                         <div class="flex @guest justify-center @endguest @auth justify-between @endauth items-center w-full">
                             @auth
-                                <a href="{{route('buynow', $product->id)}}">
+                                <a href="{{route('buynow', $product->id)}}?idempotency-key-buynow={{$buyNowKey}}">
                                     <button class="bg-pink-600 hover:bg-pink-800 text-white p-2 mt-2 rounded cursor-pointer">
                                         Buy Now
                                     </button>

@@ -23,10 +23,11 @@ use Illuminate\Support\Carbon;
  * @property int $country_id
  * @property int $state_id
  * @property int $district_id
- * @property-read \App\Models\Country $country
- * @property-read \App\Models\District $district
- * @property-read \App\Models\Order|null $orders
- * @property-read \App\Models\State $state
+ * @property-read Country $country
+ * @property-read District $district
+ * @property-read Order|null $orders
+ * @property-read State $state
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Address newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Address newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Address query()
@@ -43,6 +44,7 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereStateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Address whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 #[Fillable([

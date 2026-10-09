@@ -55,7 +55,7 @@
                                     'generate_invoice',
                                     $order->id
                                 )
-                        }}">
+                        }}?idempotency-key-generate-invoice={{ $generateInvoiceKey }}">
                                 Generate Receipt
                             </a>
                         </td>

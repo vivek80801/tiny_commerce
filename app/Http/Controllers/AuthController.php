@@ -280,6 +280,7 @@ class AuthController extends Controller
     public function dashboard(): View
     {
         setIdempontencyKey('logout');
+        $generateInvoiceKey = setIdempontencyKey('generate-invoice');
         $addresses = Address::select(
             'name',
             'phone',
@@ -315,6 +316,7 @@ class AuthController extends Controller
             ->paginate(5);
 
         return view('auth.dashboard', compact(
+            'generateInvoiceKey',
             'addresses',
             'orders',
         ));
