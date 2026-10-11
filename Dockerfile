@@ -2,6 +2,7 @@ FROM php:8.4-apache
 
 RUN apt-get update && apt-get install -y \
     git curl libpng-dev libonig-dev libxml2-dev libzip-dev libsqlite3-dev sqlite3 zip unzip \
+    && docker-php-ext-install intl \
     && docker-php-ext-install zip pdo_mysql pdo_sqlite mbstring exif pcntl bcmath gd \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
