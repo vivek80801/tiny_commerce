@@ -6,7 +6,16 @@ The project focuses on clean application architecture, reliable order processing
 
 ## LIVE URL
 
-[Tiny Commerce](https://tiny-commerce.onrender.com/)
+Home Page: [Tiny Commerce](https://tiny-commerce.onrender.com/)
+
+Admin Login: [Tiny Commerce Admin](https://tiny-commerce.onrender.com/admin/login)
+
+### Admin Credentials
+
+Email: admin@gmail.com
+Password: admin@123
+
+### This is only for preview. This is not production application.
 
 ## Screen Shot
 
