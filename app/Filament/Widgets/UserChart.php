@@ -16,8 +16,11 @@ class UserChart extends ChartWidget
     protected function getData(): array
     {
         $activeFilter = $this->filter;
-        $startDate = User::oldest()
-            ->value('created_at');
+        $startDate = User::count() > 0
+            ? User::oldest()
+                ->value('created_at')
+            : now()
+        ;
 
         if ($activeFilter === 'week') {
             $startDate = now()->startOfWeek();

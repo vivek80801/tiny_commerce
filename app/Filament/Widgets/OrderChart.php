@@ -19,8 +19,11 @@ class OrderChart extends ChartWidget
     {
         $activeFilter = $this->filter;
 
-        $startDate = Order::oldest()
-            ->value('created_at');
+        $startDate = Order::count() > 0
+            ? Order::oldest()
+                ->value('created_at')
+            : now()
+        ;
 
         $endDate = now();
 
