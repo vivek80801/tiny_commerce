@@ -12,7 +12,7 @@ Admin Login: [Tiny Commerce Admin](https://tiny-commerce.onrender.com/admin/logi
 
 ### Admin Credentials
 
-Email: admin@gmail.com
+Email: admin@gmail.com,
 Password: admin@123
 
 ### This is only for preview. This is not production application.
@@ -22,6 +22,10 @@ Password: admin@123
 ![Preview 1](./preview/tiny_commerce_preview.png)
 
 ![Preview 2](./preview/tiny_commerce_preview_2.png)
+
+## Generate Thousands Of Invoices all at once. 
+
+[![Generate Thousands of invoices all at once](./preview/thousands_invoices.png)](https://youtu.be/Tg0nPf224gU)
 
 ## Features
 
