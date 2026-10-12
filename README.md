@@ -4,6 +4,16 @@ A Laravel-based e-commerce application with product and category management, sho
 
 The project focuses on clean application architecture, reliable order processing, automated testing, and maintainable code. It also includes idempotency protection for critical user actions, email notifications, audit trails, and static code analysis.
 
+## LIVE URL
+
+[Tiny Commerce](https://tiny-commerce.onrender.com/)
+
+## Screen Shot
+
+![Preview 1](./preview/tiny_commerce_preview.png)
+
+![Preview 2](./preview/tiny_commerce_preview_2.png)
+
 ## Features
 
 ### Product and Category Management
