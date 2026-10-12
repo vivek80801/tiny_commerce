@@ -14,16 +14,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([
-            UserSeeder::class,
-            AdminSeeder::class,
-            CategorySeeder::class,
-            ProductSeeder::class,
-            ImageSeeder::class,
-            CartSeeder::class,
-            CountrySeeder::class,
-            StateSeeder::class,
-            DistrictSeeder::class,
-        ]);
+        if(config("app.env") === "production"){
+            $this->call([
+                AdminSeeder::class,
+                CountrySeeder::class,
+                StateSeeder::class,
+                DistrictSeeder::class,
+            ]);
+        } else {
+            $this->call([
+                UserSeeder::class,
+                AdminSeeder::class,
+                CategorySeeder::class,
+                ProductSeeder::class,
+                ImageSeeder::class,
+                CartSeeder::class,
+                CountrySeeder::class,
+                StateSeeder::class,
+                DistrictSeeder::class,
+            ]);
+        }
     }
 }
