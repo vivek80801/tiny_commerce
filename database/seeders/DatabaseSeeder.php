@@ -4,17 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Database\Seeders\UserSeeder;
-use Database\Seeders\AdminSeeder;
-use Database\Seeders\CategorySeeder;
-use Database\Seeders\CartSeeder;
-use Database\Seeders\ImageSeeder;
-use Database\Seeders\ProductSeeder;
-use Database\Seeders\CountrySeeder;
-use Database\Seeders\StateSeeder;
-use Database\Seeders\DistrictSeeder;
-use Database\Seeders\OrderSeeder;
-use Database\Seeders\OrderItemSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,7 +14,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        if(config("app.env") === "production"){
+        if (config('app.env') === 'production') {
             $this->call([
                 AdminSeeder::class,
                 CountrySeeder::class,

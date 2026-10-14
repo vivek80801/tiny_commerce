@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Order;
 use App\Models\OrderItem;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class OrderItemSeeder extends Seeder
@@ -19,18 +18,15 @@ class OrderItemSeeder extends Seeder
 
         $orders = Order::all();
 
-        foreach($orders as $order)
-        {
+        foreach ($orders as $order) {
             $total = 0;
             $orderItems = OrderItem::where(
-                "order_id",
+                'order_id',
                 $order->id
             )->get();
 
-            if(count($orderItems) > 0)
-            {
-                foreach($orderItems as $orderItem)
-                {
+            if (count($orderItems) > 0) {
+                foreach ($orderItems as $orderItem) {
                     $total += $orderItem->amount;
                 }
             }

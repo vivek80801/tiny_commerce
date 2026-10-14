@@ -22,8 +22,7 @@ class OrderChart extends ChartWidget
         $startDate = Order::count() > 0
             ? Order::oldest()
                 ->value('created_at')
-            : now()
-        ;
+            : now();
 
         $endDate = now();
 

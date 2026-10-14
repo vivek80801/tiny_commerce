@@ -23,11 +23,11 @@ class OrderItemFactory extends Factory
         $quantity = fake()->numberBetween(1, 5);
 
         return [
-            "product_id" => $product->id,
-            "order_id" => Order::inRandomOrder()->first()->id,
-            "price" => $product->price,
-            "quantity" => $quantity,
-            "amount" => $product->price * $quantity,
+            'product_id' => $product->id,
+            'order_id' => Order::inRandomOrder()->first()->id,
+            'price' => $product->price,
+            'quantity' => $quantity,
+            'amount' => $product->price * $quantity,
         ];
     }
 }

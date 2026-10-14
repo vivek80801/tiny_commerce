@@ -28,57 +28,54 @@ class OrderFactory extends Factory
         $orderId = generateOrderId(
             orderIdLength()
         );
-        if(
+        if (
             User::count() > 0 &&
             Address::count() > 0
-        )
-        {
+        ) {
             $user = User::first();
             $address = Address::first();
 
             return [
-                "user_id" => $user->id,
-                "address_id" => $address->id,
-                "order_id" => $orderId,
-                "total" => 0,
+                'user_id' => $user->id,
+                'address_id' => $address->id,
+                'order_id' => $orderId,
+                'total' => 0,
             ];
-        }else {
-            if(
+        } else {
+            if (
                 User::count() <= 0
-            )
-            {
+            ) {
                 User::factory()->create();
             }
             $user = User::first();
-            if(
+            if (
                 Address::count() <= 0
-            )
-            {
+            ) {
                 $country = Country::first();
                 $state = State::first();
                 $district = District::first();
 
                 Address::create([
-                    "user_id" => $user->id,
-                    "name" => fake()->name(),
-                    "phone" => 1023456789,
-                    "pin_code" => 800009,
-                    "house_number" => 323,
-                    "city" => "patna",
-                    "address" => "New address",
-                    "country_id" => $country->id,
-                    "state_id" => $state->id,
-                    "district_id" => $district->id,
+                    'user_id' => $user->id,
+                    'name' => fake()->name(),
+                    'phone' => 1023456789,
+                    'pin_code' => 800009,
+                    'house_number' => 323,
+                    'city' => 'patna',
+                    'address' => 'New address',
+                    'country_id' => $country->id,
+                    'state_id' => $state->id,
+                    'district_id' => $district->id,
                 ]);
             }
 
             $address = Address::first();
 
             return [
-                "user_id" => $user->id,
-                "address_id" => $address->id,
-                "order_id" => $orderId,
-                "total" => 0,
+                'user_id' => $user->id,
+                'address_id' => $address->id,
+                'order_id' => $orderId,
+                'total' => 0,
             ];
         }
     }

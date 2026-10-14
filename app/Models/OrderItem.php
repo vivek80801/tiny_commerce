@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Auditable;
+use Database\Factories\OrderItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -44,7 +45,7 @@ use Illuminate\Support\Carbon;
 ])]
 class OrderItem extends Model
 {
-    /** @use  HasFactory<OrderItem> */
+    /** @use  HasFactory<OrderItemFactory> */
     use Auditable, HasFactory;
 
     public function order(): BelongsTo
