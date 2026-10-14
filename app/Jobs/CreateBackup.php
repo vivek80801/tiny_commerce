@@ -25,47 +25,98 @@ class CreateBackup implements ShouldQueue
      */
     public function handle(): void
     {
-        $zipFileName = 'backup.zip';
-        $zip = new ZipArchive;
-        $dbConnection = config('database.default');
         $backupDir = storage_path('app/public/backups/');
-        $databaseBackupFile = 'database_backup.sql';
-        $databaseBackupPath = $backupDir
-            .$databaseBackupFile;
 
         if (! is_dir($backupDir)) {
             mkdir($backupDir);
         }
 
-        if ($dbConnection === 'sqlite') {
-            $databaseDir = base_path('database/');
-            $databaseFile = 'database.sqlite';
-            $databasePath = $databaseDir.$databaseFile;
+        $this->createDatabaseBackups(
+            $backupDir
+        );
+        $this->createInvoiceBackups(
+            $backupDir
+        );
+    }
 
-            exec(
-                'sqlite3 '.$databasePath.' .dump > '.$databaseBackupPath
+    private function createDatabaseBackups
+    (
+        string $backupDir
+    ): void
+    {
+        $currentTimeStamp = implode("_", explode(" ", now()));
+        $dbConnection = config('database.default');
+        $databaseBackupTempFile = 'database_backup_'. $currentTimeStamp . '.temp.sql';
+        $databaseBackupFile = 'database_backup_'. $currentTimeStamp .'.sql';
+        $databaseBackupPath = $backupDir
+            .$databaseBackupFile;
+        $databaseBackupTempPath = $backupDir
+            .$databaseBackupTempFile;
+
+        if ($dbConnection === 'sqlite') {
+            $this->createSqliteDatabaseBackups(
+                $databaseBackupTempPath
             );
         }
 
         if ($dbConnection === 'mysql') {
-            $baseConfig = 'database.connections.mysql';
-            $dbHost = config($baseConfig.'.host');
-            $dbDatabase = config($baseConfig.'.database');
-            $dbUserName = config($baseConfig.'.username');
-            $dbPassword = config($baseConfig.'.password');
-
-            exec(
-                'mysqldump -h'.$dbHost.
-                ' -u '.$dbUserName.
-                ' -p '.$dbPassword.
-                ' '.$dbDatabase.
-                ' > '.$databaseBackupPath
+            $this->createMysqlDatabaseBackups(
+                $databaseBackupTempPath
             );
         }
 
+        $this->copyFromTempFileAndDelete(
+            $databaseBackupTempPath,
+            $databaseBackupPath
+        );
+    }
+
+    private function createMysqlDatabaseBackups
+    (
+        string $databaseBackupTempPath
+    ):void
+    {
+        $baseConfig = 'database.connections.mysql';
+        $dbHost = config($baseConfig.'.host');
+        $dbDatabase = config($baseConfig.'.database');
+        $dbUserName = config($baseConfig.'.username');
+        $dbPassword = config($baseConfig.'.password');
+
+        exec(
+            'mysqldump -h'.$dbHost.
+                ' -u '.$dbUserName.
+                ' -p '.$dbPassword.
+                ' '.$dbDatabase.
+                ' > '.$databaseBackupTempPath
+        );
+    }
+
+    private function createSqliteDatabaseBackups
+    (
+        string $databaseBackupTempPath
+    ): void
+    {
+        $databaseDir = base_path('database/');
+        $databaseFile = 'database.sqlite';
+        $databasePath = $databaseDir.$databaseFile;
+
+        exec(
+            'sqlite3 '.$databasePath.' .dump > '.$databaseBackupTempPath
+        );
+    }
+
+    private function createInvoiceBackups(
+        string $backupDir
+    ): void
+    {
+        $currentTimeStamp = implode("_", explode(" ", now()));
+        $zip = new ZipArchive;
+        $zipFileName = 'backup_'. $currentTimeStamp  .'.zip';
+        $zipTempFileName = 'backup_'. $currentTimeStamp .'.temp.zip';
+        $invoiceBackupTempPath = $backupDir.$zipTempFileName;
         $invoiceBackupPath = $backupDir.$zipFileName;
 
-        if ($zip->open($invoiceBackupPath, ZipArchive::CREATE) === true) {
+        if ($zip->open($invoiceBackupTempPath, ZipArchive::CREATE) === true) {
             $invoiceFiles = File::files(
                 storage_path(
                     'app/public/invoices/'
@@ -78,6 +129,20 @@ class CreateBackup implements ShouldQueue
 
             $zip->close();
         }
+
+        $this->copyFromTempFileAndDelete(
+            $invoiceBackupTempPath,
+            $invoiceBackupPath
+        );
+    }
+
+    private function copyFromTempFileAndDelete(
+        string $path,
+        string $target,
+    ): void
+    {
+        File::copy($path, $target);
+        File::delete($path);
     }
 
     public function failed(\Throwable $e): void

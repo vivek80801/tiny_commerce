@@ -10,5 +10,5 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::job(new CleanTmpCarts)->everyMinute();
-Schedule::job(new CreateBackup)->everyMinute();
+Schedule::job(new CleanTmpCarts)->daily();
+Schedule::job(new CreateBackup)->daily();
