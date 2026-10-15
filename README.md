@@ -27,6 +27,10 @@ Password: admin@123
 
 [![Generate Thousands of invoices all at once](./preview/thousands_invoices.png)](https://youtu.be/Tg0nPf224gU)
 
+## Test Coverage
+
+![Test coverage](./preview/laravel_tiny_commerce_test_coverage.png.png)
+
 ## Features
 
 ### Product and Category Management
