@@ -29,7 +29,7 @@ Password: admin@123
 
 ## Test Coverage
 
-![Test coverage](./preview/laravel_tiny_commerce_test_coverage.png.png)
+![Test coverage](./preview/laravel_tiny_commerce_test_coverage.png)
 
 ## Features
 
